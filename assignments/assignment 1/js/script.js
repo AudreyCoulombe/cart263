@@ -2,38 +2,53 @@
 
 /********************************************************************
 
-Title of Project
-Author Name
+Assignment 1: Pixel Painter Pro
+Audrey Coulombe
 
-This is a template. Fill in the title, author, and this description
-to match your project! Write JavaScript to do amazing things below!
+Description here
 
 *********************************************************************/
+// Loads the setup function once when we open the window in the browser
 window.onload = setup;
-function setup() {
-  console.log("setting up");
-  for(let i = 0; i<1000; i++){
-    //crete a div
-    let pixel = document.createElement('div');
-    //give a class to the div
-    pixel.setAttribute('class','pixel');
-    //add an event listener to each pixel
-    pixel.addEventListener('mouseover',paint);
-    // add the new element to the page's body
-    document.body.appendChild(pixel);
 
+// setup()
+//
+function setup() {
+
+  console.log("setting up");
+
+  // Displays 1000 "pixels" (divs)
+  // Checks for each pixel if the mouse is over and executes the paint function if so
+  for (let i = 0; i < 1000; i++) {
+    // Create a div
+    let pixel = document.createElement('div');
+    // Give a class to the div
+    pixel.setAttribute('class', 'pixel');
+    // When the mouse is over the pixel, execute the paint function
+    pixel.addEventListener('mouseover', paint); // Question: Doesn't the setup run only once when we load the page (because of window.onload)? Why does the program keeps checking if the mouse is over??
+    // Add the pixel to the page's body
+    document.body.appendChild(pixel);
   }
 }
 
-function paint(e){
-  //create a new variable and store e.target in it
-  let pixel= e.target;
-  //set the pixel color to white
-  pixel.style.backgroundColor = 'white';
-  //After 1000 miliseconds, reset pixel
   setTimeout(resetPixel,1000, pixel);//last pixel called attribute the actual pixel to the parameter inside reset pixel function
+//
+function paint(e) {
+  // Create a new variable and store event parameter (e) in it
+  let pixel = e.target;
+  // Set the pixel rgb colors to random
+  let r = Math.random() * 255;
+  let g = Math.random() * 255;
+  let b = Math.random() * 255;
+  // Change the pixel color to rgb with random values
+  pixel.style.backgroundColor = `rgb(${r},${g},${b})`;
+  // After 1000 miliseconds, reset pixel
+  setTimeout(resetPixel, 1000, pixel);
 }
 
-function resetPixel(pixel){
-  pixel.style.backgroundColor = 'green';
+// resetPixel()
+//
+function resetPixel(pixel) {
+  // Change the pixel color to white
+  pixel.style.backgroundColor = 'white';
 }
