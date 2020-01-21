@@ -5,18 +5,19 @@
 Assignment 1: Pixel Painter Pro
 Audrey Coulombe
 
-Description here
+Dispays black pixels over the screen and changes their color when the mouse goes over. The colored pixels turn white after a delay. When the right or left arrow is pressed, rotates all the pixels.
 
 *********************************************************************/
-// Loads the setup function once when we open the window in the browser
+
+// Loads the setup function (once? clearly not...) when we open the window in the browser
 window.onload = setup;
+// Global variable
+let rotation = 0;
 
 // setup()
 //
+// Displays pixels over the screen, and checks mouse and keys input for paint and rotate functions
 function setup() {
-
-  console.log("setting up");
-
   // Displays 1000 "pixels" (divs)
   // Checks for each pixel if the mouse is over and executes the paint function if so
   for (let i = 0; i < 1000; i++) {
@@ -29,10 +30,13 @@ function setup() {
     // Add the pixel to the page's body
     document.body.appendChild(pixel);
   }
+  // When a certain key is down, execute the rotate fuction
+  document.addEventListener('keydown', rotate);
 }
 
-  setTimeout(resetPixel,1000, pixel);//last pixel called attribute the actual pixel to the parameter inside reset pixel function
+// paint(e)
 //
+// Paints the pixels with random colors and resets it after a certain time
 function paint(e) {
   // Create a new variable and store event parameter (e) in it
   let pixel = e.target;
@@ -48,7 +52,33 @@ function paint(e) {
 
 // resetPixel()
 //
+// Change the pixel color
 function resetPixel(pixel) {
-  // Change the pixel color to white
-  pixel.style.backgroundColor = 'white';
+  // Change the pixel color to grey
+  pixel.style.backgroundColor = 'grey';
+}
+
+// rotate()
+//
+// Depending on which key is pressed, rotates all the pixels
+function rotate(e) {
+  // Put all the elements that has the class "pixel" in a variable
+  let pixels = document.getElementsByClassName('pixel');
+  // If the left arrow is pressed...
+  if (e.keyCode === 37) {
+    // Decrease the rotation by 1 degree
+    rotation -= 1;
+  }
+  // If the right arrow is pressed...
+  else if (e.keyCode === 39) {
+    // Increase the rotation by 1 degree
+    rotation += 1;
+  }
+  // Track the rotation value (in degrees) on console
+  console.log("rotation:" + rotation);
+  // For each element stored in the "pixels" variable...
+  for (let i = 0; i < pixels.length; i++) {
+    // Rotate it according to the "rotation" value
+    pixels[i].style.transform = `rotate(${rotation}deg)`;
+  }
 }
