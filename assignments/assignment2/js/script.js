@@ -3,7 +3,7 @@
 /*****************
 
 Raving Redactionist
-Pippin Barr
+Audrey Coulombbe
 
 You are redacting a document, but it keeps becoming unredacted!
 Click the secret information to hide it, don't let all the
@@ -17,7 +17,9 @@ const REVEAL_POSSIBILITY = 0.1;
 const UPDATE_FREQUENCY = 500;
 // A place to store the jQuery selection of all spans
 let $spans;
-let secretsFound;
+// The number of secrets found
+let secretsFound = 0;
+// The total number of secrets
 let secretsTotal;
 
 // When the document is loaded we call the setup function
@@ -26,6 +28,8 @@ $(document).ready(setup);
 // setup()
 //
 // Sets the click handler and starts the time loop
+// Counts the number of secrets on page and displays it
+// Checks if the mouse goes over a secret
 function setup() {
   // Save the selection of all spans (since we do stuff to them multiple times)
   $spans = $('span');
@@ -34,12 +38,12 @@ function setup() {
   // Set an interval of 500 milliseconds to update the state of the page
   setInterval(update, UPDATE_FREQUENCY);
   // Track the number of secrets
-  secretsTotal= $('.secret').length;
+  secretsTotal = $('.secret').length;
   // Write the number of secrets on screen
   $('#totalSecrets').text(secretsTotal);
   // When the mouse goes over a secret, execute the revealSecret function
   $('.secret').on('mouseover', revealSecret);
-};
+}
 
 // spanClicked()
 //
@@ -75,6 +79,14 @@ function updateSpan() {
 // revealSecret()
 //
 // Add the found class to the secrets
+// Tracks the number of secrets found and write it on screen
 function revealSecret() {
+  // Add the class found to the secrets
   $(this).addClass('found');
+  // Remove the mouseover event once the secret is found
+  $('.found').off('mouseover');
+  // Increase by one the number of secrets found
+  secretsFound += 1;
+  // Write the number of secrets found on screen
+  $('#foundSecrets').text(secretsFound);
 }
