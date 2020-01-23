@@ -37,6 +37,8 @@ function setup() {
   secretsTotal= $('.secret').length;
   // Write the number of secrets on screen
   $('#totalSecrets').text(secretsTotal);
+  // When the mouse goes over a secret, execute the revealSecret function
+  $('.secret').on('mouseover', revealSecret);
 };
 
 // spanClicked()
@@ -70,23 +72,9 @@ function updateSpan() {
   }
 }
 
-// A version using anonymous functions if you're interested:
-
-// $(document).ready(function () {
-//   $spans = $('span');
+// revealSecret()
 //
-//   $spans.on('click',function () {
-//     $(this).removeClass('revealed');
-//     $(this).addClass('redacted');
-//   });
-//
-//   setInterval(function () {
-//     $spans.each(function () {
-//       let r = Math.random();
-//       if (r < REVEAL_POSSIBILITY) {
-//         $(this).removeClass('redacted');
-//         $(this).addClass('revealed');
-//       }
-//     });
-//   },UPDATE_FREQUENCY);
-// });
+// Put secrets ...
+function revealSecret() {
+  console.log("reveal secret");
+}
