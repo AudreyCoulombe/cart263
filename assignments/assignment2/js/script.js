@@ -74,7 +74,7 @@ function updateSpan() {
 
 // revealSecret()
 //
-// Put secrets ...
+// Add the found class to the secrets
 function revealSecret() {
-  console.log("reveal secret");
+  $(this).addClass('found');
 }
