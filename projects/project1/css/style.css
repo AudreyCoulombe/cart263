@@ -8,22 +8,70 @@ body {
   background-color: ivory;
 }
 
-.bin {
-  margin-left: auto;
-  margin-right: auto;
-}
-
+/* container in which the objects to sort are displayed */
 .objectsContainer {
   width: 300px;
   height: 200px;
+  margin-top: 50px;
   background-color: rgb(242, 212, 143);
   margin-left: auto;
   margin-right: auto;
   position: relative;
 }
 
+/* images of garbage, recycle and compost elements */
 .objectsToSort {
   position: absolute;
-  /* top: 5;
-  right: -20px; */
+  /* top: 0;
+  left: 0px; */
+}
+
+/* div that contains divs with .binDivision class */
+.bin {
+  margin-left: auto;
+  margin-right: auto;
+  width:343px;
+  height:246px;
+  position: relative;
+}
+
+/* div where the classes garbage, recycle and compost are stored */
+.binDivision {
+  display:flex;
+  flex: 1;
+  flex-direction: row;
+}
+
+/* The location where to drop garbage */
+.garbage {
+  position:absolute;
+  top:0px;
+  left:0px;
+  /* color: green;
+  border-style: solid; */
+  width:33%;
+  height:50%;
+}
+
+/* The location where to drop recycle */
+.recycle {
+  position:absolute;
+  top:0px;
+  left:33%;
+  /* color: green;
+  border-style: solid;*/
+  width:33%;
+  height:50%;
+}
+
+/* The location where to drop compost */
+.compost {
+  position:absolute;
+  top:0px;
+  right:0px;
+  float:left;
+  /* color: green;
+  border-style: solid; */
+  width:33%;
+  height:50%;
 }
