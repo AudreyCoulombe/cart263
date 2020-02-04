@@ -1,7 +1,6 @@
 body {
   height: 600px;
-  margin-left: 50px;
-  margin-top: 50px;
+  margin-top: 60px;
   display:flex;
   flex: 1;
   flex-direction: column;
@@ -11,16 +10,22 @@ body {
 /* container in which the objects to sort are displayed */
 .objectsContainer {
   width: 300px;
-  height: 200px;
+  height: 350px;
   margin-top: 50px;
-  background-color: rgb(242, 212, 143);
   margin-left: auto;
   margin-right: auto;
   position: relative;
 }
 
+.containerImage {
+  width:300px;
+  height:350px;
+  z-index: 1;
+}
+
 /* images of garbage, recycle and compost elements */
 .objectsToSort {
+  z-index: 3;
   position: absolute;
   /* top: 0;
   left: 0px; */
@@ -30,42 +35,51 @@ body {
 .bin {
   margin-left: auto;
   margin-right: auto;
-  width:343px;
-  height:246px;
+  width:400px;
+  /* height:246px; */
+  height: 286px;
   position: relative;
+  z-index: 2;
 }
 
-/* div where the classes garbage, recycle and compost are stored */
-.binDivision {
-  display:flex;
-  flex: 1;
-  flex-direction: row;
+/* bin image */
+#bin {
+  width:400px;
+  height: 246px;
+  position: absolute;
+  top:40px;
 }
 
-/* The location where to drop garbage */
-.garbage {
+/* Where the number of sorted garbage objects is displayed */
+#garbageCount {
   position:absolute;
   top:0px;
   left:0px;
   /* color: green;
   border-style: solid; */
   width:33%;
-  height:50%;
+  height:40px;
+  margin: 0px;
+  text-align: center;
+  font-size: 25px;
 }
 
-/* The location where to drop recycle */
-.recycle {
+/* Where the number of sorted recycle objects is displayed */
+#recycleCount {
   position:absolute;
   top:0px;
   left:33%;
   /* color: green;
-  border-style: solid;*/
+  border-style: solid; */
   width:33%;
-  height:50%;
+  height:40px;
+  margin: 0px;
+  text-align: center;
+  font-size: 25px;
 }
 
-/* The location where to drop compost */
-.compost {
+/* Where the number of sorted compost objects is displayed */
+#compostCount {
   position:absolute;
   top:0px;
   right:0px;
@@ -73,5 +87,45 @@ body {
   /* color: green;
   border-style: solid; */
   width:33%;
-  height:50%;
+  height:40px;
+  margin: 0px;
+  text-align: center;
+  font-size: 25px;
+}
+
+/* The location where to drop garbage */
+.garbage {
+  position:absolute;
+  top:40px;
+  left:0px;
+  /* color: red;
+  border-style: solid; */
+  width:33%;
+  height:85px;
+  margin-top: 40px;
+}
+
+/* The location where to drop recycle */
+.recycle {
+  position:absolute;
+  top:40px;
+  left:33%;
+  /* color: red;
+  border-style: solid; */
+  width:33%;
+  height:85px;
+  margin-top: 40px;
+}
+
+/* The location where to drop compost */
+.compost {
+  position:absolute;
+  top:40px;
+  right:0px;
+  float:left;
+  /* color: red;
+  border-style: solid; */
+  width:33%;
+  height:85px;
+  margin-top: 40px;
 }
