@@ -1,5 +1,4 @@
 body {
-  height: 600px;
   margin-top: 60px;
   display:flex;
   flex: 1;
@@ -7,16 +6,28 @@ body {
   background-color: ivory;
 }
 
+/* Style of the dialog box when the game starts */
+.dialogStyle
+  /* Hide close button */
+  .ui-dialog-titlebar-close {
+    display: none;
+  }
+   .ui-dialog-content {
+    font-size: 40px;
+    text-align: center;
+  }
+
 /* container in which the objects to sort are displayed */
 .objectsContainer {
   width: 300px;
   height: 350px;
-  margin-top: 50px;
+  margin-top: 10px;
   margin-left: auto;
   margin-right: auto;
   position: relative;
 }
 
+/* Style applied to the container image */
 .containerImage {
   width:300px;
   height:350px;
@@ -31,12 +42,11 @@ body {
   left: 0px; */
 }
 
-/* div that contains divs with .binDivision class */
+/* div that contains image of the bin, count divs and drop divs */
 .bin {
   margin-left: auto;
   margin-right: auto;
   width:400px;
-  /* height:246px; */
   height: 286px;
   position: relative;
   z-index: 2;
@@ -69,8 +79,6 @@ body {
   position:absolute;
   top:0px;
   left:33%;
-  /* color: green;
-  border-style: solid; */
   width:33%;
   height:40px;
   margin: 0px;
@@ -84,8 +92,6 @@ body {
   top:0px;
   right:0px;
   float:left;
-  /* color: green;
-  border-style: solid; */
   width:33%;
   height:40px;
   margin: 0px;
@@ -98,8 +104,6 @@ body {
   position:absolute;
   top:40px;
   left:0px;
-  /* color: red;
-  border-style: solid; */
   width:33%;
   height:85px;
   margin-top: 40px;

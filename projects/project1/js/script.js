@@ -2,7 +2,7 @@
 
 /********************************************************************
 
-Garbage Game
+Trash Game
 Audrey Coulombe
 
 A game where you have to sort garbage, recycle and compost elements by dragging them in the rigth bin, but it keeps going back to the initial container with garbage, recycle and compost all mixed up.
@@ -17,59 +17,73 @@ let recycleCount=0;
 let compostCount=0;
 
 // Sound variables:
-// let chewingSound = new Audio("assets/sounds/crunch.wav");
-// let buzzSound = new Audio("assets/sounds/buzz.mp3");
+let droppingSound = new Audio("assets/sounds/drop.wav");
+let gameMusic = new Audio("assets/sounds/gameMusic.mp3");
 
 // Runs setup only once the page Document Object Model is ready
 $(document).ready(setup);
 
 // setup()
 //
+//
 function setup() {
+  // Open a dialog box before the starts
+  $( '.startBox' ).dialog({
+    modal: true,
+    resizable: false,
+    draggable: false,
+    dialogClass: "dialogStyle",
+    height: 400,
+    width: 600,
+    autoOpen: true,
+    buttons: [{
+      text: "Click here to start",
+      click: function() {
+        $( this ).dialog( "destroy" );
+        $('.startBox').text("");
+        playMusic();
+      }
+    }],
+  });
+
   // Put all objects with the specific class in a variable
   $objectsToSort = $('.objectsToSort');
+
   // For each object in the "array", execute the positionObjects function
   $objectsToSort.each(positionObjects);
+
   // Make the objects to sort draggable
   $objectsToSort.draggable({
+    revert: "invalid",
     // When you begin to drag, play a sound
     start: function() {
       // buzzSound.play();
     },
     // When you stop dragging, play another sound
     stop: function() {
-      // buzzSound.pause();
+      droppingSound.play();
+      // droppingSound.pause();
     }
   });
+
   // Make the objects with the class garbage droppable
   $('.garbage').droppable({
     // Accept only if the object has a garbage id
     accept: "#garbage",
-    // out: function(event,ui) {
-    // $(this).effect( "shake");
-    // },
-    // accept: "#garbage", function( event, ui ) {
-    //   if ($(this).attr("id") === 'garbage') {
-    //     $('#garbage').effect( "shake");
-    //     return true;
-    //     console.log("match");
-    //   }
-    //   else {
-    //     $('#garbage').effect( "shake");
-    //     return false
-    //     $(this).effect( "shake");
-    //     console.log("no match");
-    //   }
-      // if ($(this).attr("id") === 'garbage') {
-      //   return false;
-      // }
-      // else {
-      //   $(this).effect( "shake");
-      // }
-    // },
+    // accept: function (ui,event) {
+    //     if ($(ui.droppable[0]).attr("id") === 'garbage') {
+    //       return true;
+    //     }
+    //     else {
+    //       return false;
+    //       $(ui.droppable[0]).effect( "shake");
+    //     }
+    //   },
     // When dropped, execute the onDrop function
-    drop: onDrop
+    drop: onDrop,
   });
+  console.log($('.garbage').droppable( "option" ));
+
   // Make the objects with the class recycle droppable
   $('.recycle').droppable({
     // Accept only if the object has a recycle id
@@ -77,6 +91,7 @@ function setup() {
     // When dropped, execute the onDrop function
     drop: onDrop
   });
+
   // Make the objects with the class compost droppable
   $('.compost').droppable({
     // Accept only if the object has a compost id
@@ -84,26 +99,28 @@ function setup() {
     // When dropped, execute the onDrop function
     drop: onDrop
   });
-  // Play a sound in loop
-  // buzzSound.loop = true;
 }
 
 // positionObjects()
+//
 // Positions the objects randomly in the objects container
 function positionObjects(index, value) {
   // Create a random number for the height position
-  let objectsHeightPosition = Math.random() * 150;
+  let objectsHeightPosition = Math.random() * 150 + 10;
   // Add the height position to the css of the object
   $(this).css('bottom', objectsHeightPosition + 'px');
   // Create a random number for the width position
-  let objectsWidthPosition = Math.random() * 220;
+  let objectsWidthPosition = Math.random() * 210 + 10;
   // Add the width position to the css of the object
   $(this).css('left', objectsWidthPosition + 'px');
-  // console.log("height position: " + objectsHeightPosition);
-  // console.log("width position: " + objectsWidthPosition);
+  // Rotate the object with a random angle (so it looks more like real garbage)
+  let rotationAngle = Math.random() * 360;
+  // Add the rotation value to the css of the object
+  $(this).css({'transform' : 'rotate(' + rotationAngle + 'deg)'});
 }
 
 // onDrop()
+//
 // Animates the object when dropped
 function onDrop(event, ui) {
   console.log(ui.draggable[0]);
@@ -121,11 +138,11 @@ function onDrop(event, ui) {
         top: ["+=70", "swing"],
       }, 1000)
       .animate({
-        left: ["+=90", "swing"],
-        top: ["+=70", "swing"],
+        left: ["+=110", "swing"],
+        top: ["+=50", "swing"],
       }, 1000)
       .animate({
-        top: ["+=200", "swing"],
+        top: ["+=250", "swing"],
       }, 1000)
       .animate({
         opacity: [ 1.0, "linear" ]
@@ -148,7 +165,7 @@ function onDrop(event, ui) {
         top: ["+=70", "swing"],
       }, 1000)
       .animate({
-        top: ["+=200", "swing"],
+        top: ["+=300", "swing"],
       }, 1000)
       .animate({
         opacity: [ 1.0, "linear" ]
@@ -170,11 +187,11 @@ function onDrop(event, ui) {
         top: ["+=70", "swing"],
       }, 1000)
       .animate({
-        left: ["-=90", "swing"],
-        top: ["+=70", "swing"],
+        left: ["-=110", "swing"],
+        top: ["+=50", "swing"],
       }, 1000)
       .animate({
-        top: ["+=200", "swing"],
+        top: ["+=250", "swing"],
       }, 1000)
       .animate({
         opacity: [ 1.0, "linear" ]
@@ -182,4 +199,12 @@ function onDrop(event, ui) {
         // Animation complete.
       });
   }
+}
+// playMusic()
+//
+
+function playMusic(){
+  // Play a sound in loop
+  gameMusic.play();
+  gameMusic.loop = true;
 }
