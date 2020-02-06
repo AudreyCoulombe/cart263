@@ -27,7 +27,7 @@ $(document).ready(setup);
 //
 //
 function setup() {
-  // Open a dialog box before the starts
+  // Open a dialog box before the game starts
   $( '.startBox' ).dialog({
     modal: true,
     resizable: false,
@@ -200,9 +200,9 @@ function onDrop(event, ui) {
       });
   }
 }
+
 // playMusic()
 //
-
 function playMusic(){
   // Play a sound in loop
   gameMusic.play();
