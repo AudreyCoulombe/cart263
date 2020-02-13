@@ -3,7 +3,7 @@
 /*****************
 
 Slamina
-rraB nippiP
+ebmoluoC yerduA
 
 A simple guessing game based on voice synthesis. The computer reads out an
 animal name, but it reads it backwards. The user selects the animal they
@@ -157,7 +157,10 @@ let animals = [
   "yak",
   "zebra"
 ];
-
+// An object literal containing the differrent commands
+let commands = {
+  'I give up': givingUp,
+};
 // We need to track the correct button for each round
 let $correctButton;
 // We also track the set of buttons
@@ -173,6 +176,7 @@ $(document).ready(setup);
 // We just start a new round right away!
 function setup() {
   newRound();
+  handleVocalCommands();
 }
 
 // newRound()
@@ -274,4 +278,28 @@ function handleGuess() {
 function getRandomElement(array) {
   let element = array[Math.floor(Math.random() * array.length)];
   return element;
+}
+
+// givingUp()
+//
+// Shakes the right answer and display new buttons
+function givingUp() {
+    console.log("giving up");
+    // Shake the correct answer
+    $correctButton.effect("shake");
+    // Remove all the buttons
+    setTimeout(function() {$('.guess').remove();}, 1000);
+    // Start a new round
+    setTimeout(newRound, 1000);
+}
+
+// handleVocalCommands()
+//
+// Set the annyang commands
+// Refered to this example: https://www.talater.com/annyang/
+function handleVocalCommands() {
+  // Add my commands to annyang
+  annyang.addCommands(commands);
+  // Start listening with th microphone
+  annyang.start();
 }
