@@ -157,10 +157,13 @@ let animals = [
   "yak",
   "zebra"
 ];
-// An object literal containing the differrent commands
+// An object literal containing the different commands
 let commands = {
   'I give up': givingUp,
+  'Say it again': sayBackwards,
 };
+// the pitch and rate options for the voice
+let speakOptions;
 // We need to track the correct button for each round
 let $correctButton;
 // We also track the set of buttons
@@ -197,14 +200,19 @@ function newRound() {
   }
   // Choose a random button from the buttons array as our correct button
   $correctButton = getRandomElement(buttons);
-  // Say the label (text) on this button
-  sayBackwards($correctButton.text());
+  // Sets random numbers for the pitch and rate of the voice each time we start a new round
+  speakOptions = {
+    pitch: Math.random(),
+    rate: Math.random()
+  };
+  // Says the text backwards
+  sayBackwards();
 }
 
-// sayBackwards(text)
+// sayBackwards()
 //
-// Uses ResponsiveVoice to say the specified text backwards!
-function sayBackwards(text) {
+// Uses ResponsiveVoice to say the name of the correct button backwards!
+function sayBackwards() {
   // We create a reverse version of the name by:
   // 1. using .split('') to split the string into an array with each character
   // as a separate element.
@@ -216,17 +224,9 @@ function sayBackwards(text) {
   // e.g. ['t','a','b'] -> "tab"
   // (We do this all in one line using "chaining" because .split() returns an array for
   // for .reverse() to work on, and .reverse() returns an array for .join() to work on.)
-  let backwardsText = text.split('').reverse().join('');
-
-  // Set some random numbers for the voice's pitch and rate parameters for a bit of fun
-  let options = {
-    pitch: Math.random(),
-    rate: Math.random()
-  };
-
-  // Use ResponsiveVoice to speak the string we generated, with UK English Male voice
-  // and the options we just specified.
-  responsiveVoice.speak(backwardsText, 'UK English Male', options);
+  let backwardsText = $correctButton.text().split('').reverse().join('');
+  // Use ResponsiveVoice to speak the string we generated, with UK English Male voice and the options setted in the function newRound()
+  responsiveVoice.speak(backwardsText, 'UK English Male', speakOptions);
 }
 
 // addButton(label)
