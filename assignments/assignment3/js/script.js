@@ -17,6 +17,8 @@ https://responsivevoice.org/
 
 Animal names from:
 https://github.com/dariusk/corpora/blob/master/data/animals/common.json
+Inspired by annyang examples:
+https://github.com/TalAter/annyang/blob/master/docs/README.md
 
 ******************/
 
@@ -161,6 +163,7 @@ let animals = [
 let commands = {
   'I give up': givingUp,
   'Say it again': sayBackwards,
+  'I think it is *playerSaid': handleVocalGuess,
 };
 // the pitch and rate options for the voice
 let speakOptions;
@@ -256,18 +259,45 @@ function addButton(label) {
 // if so starts a new round
 // if not indicates it was incorrect
 function handleGuess() {
-  // If the button they clicked on has the same label as
-  // the correct button, it must be the right answer...
+  // If the button they clicked on has the same label as the correct button, it must be the right answer...
   if ($(this).text() === $correctButton.text()) {
+    // Highlight the correct answer in blue during 3 seconds
+    $correctButton.effect("highlight", {color: "#66ffff"}, 3000);
+    // Remove all the buttons after 1 second
+    setTimeout(function() {$('.guess').remove();}, 1000);
+    // Start a new round after 1 second
+    setTimeout(newRound, 1000);
+  }
+  // If they clicked on the wrong button
+  else {
+    // shake the clicked button
+    $(this).effect('shake');
+    // And say the correct animal again to "help" them
+    sayBackwards($correctButton.text());
+  }
+}
+
+// handleVocalGuess()
+//
+// When the player says "I think it is (his guess)", checks if the guess is the same as the correct answer
+function handleVocalGuess(playerSaid) {
+  annyang.addCallback('resultMatch', function(playerSaid, commandText, possiblePhrases) {
+    console.log("player said: " + playerSaid);
+    console.log("matched command: " + commandText);
+    console.log("possible words the user said: " + possiblePhrases);
+  });
+  // If his vocal guess is the same as the correct button...
+  if (playerSaid === $correctButton.text()) {
+    // Highlight the correct answer in blue during 3 seconds
+    $correctButton.effect("highlight", {color: "#66ffff"}, 3000);
     // Remove all the buttons
-    $('.guess').remove();
+    setTimeout(function() {$('.guess').remove();}, 1000);
     // Start a new round
     setTimeout(newRound, 1000);
   }
+  // If the guess is wrong...
   else {
-    // Otherwise they were wrong, so shake the clicked button
-    $(this).effect('shake');
-    // And say the correct animal again to "help" them
+    // Say the correct animal again to "help" them
     sayBackwards($correctButton.text());
   }
 }
@@ -284,9 +314,8 @@ function getRandomElement(array) {
 //
 // Shakes the right answer and display new buttons
 function givingUp() {
-    console.log("giving up");
-    // Shake the correct answer
-    $correctButton.effect("shake");
+    // Highlight the correct answer in blue during 3 seconds
+    $correctButton.effect("highlight", {color: "#66ffff"}, 3000);
     // Remove all the buttons
     setTimeout(function() {$('.guess').remove();}, 1000);
     // Start a new round
