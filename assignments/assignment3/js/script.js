@@ -165,6 +165,8 @@ let commands = {
   'Say it again': sayBackwards,
   'I think it is *playerSaid': handleVocalGuess,
 };
+// variable that keeps track of the score
+let score = 0;
 // the pitch and rate options for the voice
 let speakOptions;
 // We need to track the correct button for each round
@@ -248,7 +250,7 @@ function addButton(label) {
   // Listen for a click on the button which means the user has guessed
   $button.on('click', handleGuess);
   // Finally, add the button to the page so we can see it
-  $('body').append($button);
+  $('.buttons').append($button);
   // Return the button
   return $button;
 }
@@ -267,6 +269,8 @@ function handleGuess() {
     setTimeout(function() {$('.guess').remove();}, 1000);
     // Start a new round after 1 second
     setTimeout(newRound, 1000);
+    // Add 1 to the score
+    score += 1;
   }
   // If they clicked on the wrong button
   else {
@@ -274,18 +278,23 @@ function handleGuess() {
     $(this).effect('shake');
     // And say the correct animal again to "help" them
     sayBackwards($correctButton.text());
+    // Reset the score to 0
+    score = 0;
   }
+  // display the new score
+  displayScore();
 }
 
 // handleVocalGuess()
 //
 // When the player says "I think it is (his guess)", checks if the guess is the same as the correct answer
 function handleVocalGuess(playerSaid) {
-  annyang.addCallback('resultMatch', function(playerSaid, commandText, possiblePhrases) {
-    console.log("player said: " + playerSaid);
-    console.log("matched command: " + commandText);
-    console.log("possible words the user said: " + possiblePhrases);
-  });
+  // I keep this here to remember it exists
+  // annyang.addCallback('resultMatch', function(playerSaid, commandText, possiblePhrases) {
+  //   console.log("player said: " + playerSaid);
+  //   console.log("matched command: " + commandText);
+  //   console.log("possible words the user said: " + possiblePhrases);
+  // });
   // If his vocal guess is the same as the correct button...
   if (playerSaid === $correctButton.text()) {
     // Highlight the correct answer in blue during 3 seconds
@@ -294,12 +303,18 @@ function handleVocalGuess(playerSaid) {
     setTimeout(function() {$('.guess').remove();}, 1000);
     // Start a new round
     setTimeout(newRound, 1000);
+    // Add 1 to the score
+    score += 1;
   }
   // If the guess is wrong...
   else {
     // Say the correct animal again to "help" them
     sayBackwards($correctButton.text());
+    // Reset the score to 0
+    score = 0;
   }
+  // display the new score
+  displayScore();
 }
 
 // getRandomElement(array)
@@ -331,4 +346,11 @@ function handleVocalCommands() {
   annyang.addCommands(commands);
   // Start listening with th microphone
   annyang.start();
+}
+
+// displayScore()
+//
+// displays the score in the div with the class ".score"
+function displayScore() {
+  $('.score').text("Your score: " + score);
 }
