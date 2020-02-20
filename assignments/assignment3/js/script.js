@@ -335,6 +335,8 @@ function givingUp() {
     setTimeout(function() {$('.guess').remove();}, 1000);
     // Start a new round
     setTimeout(newRound, 1000);
+    score = 0;
+    displayScore();
 }
 
 // handleVocalCommands()
