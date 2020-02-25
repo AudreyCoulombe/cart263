@@ -92,11 +92,13 @@ function preload() {
 
 // setup()
 //
-// Description of setup
+// Creates Canvas and displays title page
 function setup() {
-  // Create the canvas
+  // Creates the canvas
   createCanvas(1400, 750);
+  // Displays background image as title image
   image(backgroundImage, 0, 0, width, height);
+  // And displays text over it
   text("Title page", width/2, height/2);
 }
 
@@ -109,38 +111,54 @@ function draw() {
 
 //  mousePressed()
 //
-// When the mouse is pressed, executes the displayBodyParts function
+// When the mouse is pressed, checks if we are at the state TITLE.
+// If so, displays the "game" arrangement
 function mousePressed() {
+  // If the state is "TITLE"...
   if (state === "TITLE") {
+    // Display the background image
     image(backgroundImage, 0, 0, width, height);
+    // And the buttons
     displayButtons();
+    // And change the state to "GAME"
     state = "GAME";
   }
-}
-// displayBodyParts()
-//
-// Displays the body parts in 3 rows: the legs, the bodies and the heads
-function displayBodyParts() {
-  // For each element in bodyParts array...
-  for (let i = 0; i< bodyParts.length; i++) {
-    // Display the image
-    image(bodyParts[i], bodyPartsX, bodyPartsY, bodyPartsWidth, bodyPartsHeight);
-    // Add 350 to the X position so they are next to each other
-    bodyPartsX += 350;
-    // if it is the first body or the first legs in the array, reset the X position to 0 so it starts a new row
-    if (i===5 || i===10) {
-      bodyPartsX = 0;
-    }
 }
 
 // displayButtons()
 //
 // Changes the css of the buttons so we can see it
 function displayButtons() {
+  // Stocking the 3 buttons in 3 variables
   let headsButton = document.getElementById("heads");
   let bodiesButton = document.getElementById("bodies");
   let legsButton = document.getElementById("legs");
+  // And change their display mode in css to "block"
   headsButton.style.display = "block";
   bodiesButton.style.display = "block";
   legsButton.style.display = "block";
+}
+
+// spinLegsAndStop()
+//
+// Checks is the legs are already spinning or not
+// Spins it when not spinning and vice versa
+function spinLegsAndStop() {
+  // If the the legs are not spinning
+  if(legsSpinning === false){
+    // Set an interval and store it in a variable
+    spinningLegsInterval = setInterval(function(){
+      // Display the next images by the top left corner
+      imageMode(CORNER);
+      // Display the background image over the previous one
+      image(backgroundImage, 0, 0, width, height);
+      imageMode(CENTER);
+      image(bodyParts[Math.floor(Math.random()*5)], width/2, height/2, bodyPartsWidth, bodyPartsHeight);
+    }, 100);
+    legsSpinning = true;
+  }
+  else if (legsSpinning===true){
+    clearInterval(spinningLegsInterval);
+    legsSpinning = false;
+  }
 }
