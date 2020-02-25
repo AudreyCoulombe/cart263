@@ -90,3 +90,27 @@ function setup() {
 function draw() {
 
 }
+
+//  mousePressed()
+//
+// When the mouse is pressed, executes the displayBodyParts function
+function mousePressed() {
+  displayBodyParts();
+}
+
+// displayBodyParts()
+//
+// Displays the body parts in 3 rows: the legs, the bodies and the heads
+function displayBodyParts() {
+  // For each element in bodyParts array...
+  for (let i = 0; i< bodyParts.length; i++) {
+    // Display the image
+    image(bodyParts[i], bodyPartsX, bodyPartsY, bodyPartsWidth, bodyPartsHeight);
+    // Add 350 to the X position so they are next to each other
+    bodyPartsX += 350;
+    // if it is the first body or the first legs in the array, reset the X position to 0 so it starts a new row
+    if (i===5 || i===10) {
+      bodyPartsX = 0;
+    }
+  }
+}
