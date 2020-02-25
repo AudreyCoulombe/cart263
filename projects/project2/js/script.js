@@ -8,6 +8,19 @@ Audrey Coulombe
 A game where you have to generate kids caracters and titles as quick as possible to make more money.
 
 ******************/
+// Initial states of the game
+let state = "TITLE";
+let legsSpinning = false;
+let bodiesSpinning = false;
+let headsSpinning = false;
+
+// Variables for the spinning intervals
+let spinningLegsInterval;
+let spinningBodiesInterval;
+let spinningHeadsInterval;
+
+// Background image variable
+let backgroundImage;
 // Heads images
 let headDora;
 let headElmo;
@@ -40,6 +53,8 @@ let bodyPartsHeight = 375;
 //
 // Preloads images and put the body parts in an array
 function preload() {
+  // Load the background image
+  backgroundImage = loadImage("assets/images/backgroundLandscape.png");
   // Load all the legs images and push them in the array with the body parts
   legDora = loadImage("assets/images/legDora.png");
   bodyParts.push(legDora);
@@ -81,7 +96,8 @@ function preload() {
 function setup() {
   // Create the canvas
   createCanvas(1400, 750);
-  background(0);
+  image(backgroundImage, 0, 0, width, height);
+  text("Title page", width/2, height/2);
 }
 
 // draw()
@@ -95,9 +111,12 @@ function draw() {
 //
 // When the mouse is pressed, executes the displayBodyParts function
 function mousePressed() {
-  displayBodyParts();
+  if (state === "TITLE") {
+    image(backgroundImage, 0, 0, width, height);
+    displayButtons();
+    state = "GAME";
+  }
 }
-
 // displayBodyParts()
 //
 // Displays the body parts in 3 rows: the legs, the bodies and the heads
@@ -112,5 +131,16 @@ function displayBodyParts() {
     if (i===5 || i===10) {
       bodyPartsX = 0;
     }
-  }
+}
+
+// displayButtons()
+//
+// Changes the css of the buttons so we can see it
+function displayButtons() {
+  let headsButton = document.getElementById("heads");
+  let bodiesButton = document.getElementById("bodies");
+  let legsButton = document.getElementById("legs");
+  headsButton.style.display = "block";
+  bodiesButton.style.display = "block";
+  legsButton.style.display = "block";
 }
