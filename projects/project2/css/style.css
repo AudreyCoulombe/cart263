@@ -32,7 +32,6 @@ button {
   font-size: 20px;
   cursor: pointer;
   font-family: Impact, Charcoal, sans-serif;
-  display: none;
 }
 
 .bodyPartsImages {
@@ -41,6 +40,7 @@ button {
   top: 188px;
   width: 440px;
   height: 375px;
+  /* visibility: hidden; */
 }
 
 #headsButton {
