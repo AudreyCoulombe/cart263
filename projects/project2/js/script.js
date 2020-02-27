@@ -25,6 +25,8 @@ let legsDelay;
 let bodyDelay;
 let headDelay;
 let initialSpinningDelay = 100;
+let additionalSpinningDelay = 30;
+let maximalSpinningDelay = 1500;
 
 // Run setup when the page is ready
 $(document).ready(setup);
@@ -43,18 +45,20 @@ function setup() {
 // Sets the spinning states to true and resets the spinning delay
 // Calls functions to spin the legs, bodies and heads all at once
 function spinAll() {
-  // Set the spinning states to true
-  spinningLegs = true;
-  spinningBodies = true;
-  spinningHeads = true;
-  // Reset the spinning delays to the initial value
-  legsDelay = initialSpinningDelay;
-  bodyDelay = initialSpinningDelay;
-  headDelay = initialSpinningDelay;
-  // Spin the legs, the bodies and the heads
-  spinLegs();
-  spinBodies();
-  spinHeads();
+  if (spinningLegs === false && spinningBodies === false && spinningHeads === false) {
+    // Set the spinning states to true
+    spinningLegs = true;
+    spinningBodies = true;
+    spinningHeads = true;
+    // Reset the spinning delays to the initial value
+    legsDelay = initialSpinningDelay;
+    bodyDelay = initialSpinningDelay;
+    headDelay = initialSpinningDelay;
+    // Spin the legs, the bodies and the heads
+    spinLegs();
+    spinBodies();
+    spinHeads();
+  }
 }
 
 // spinLegs()
@@ -119,9 +123,9 @@ function stopSpinningLegs() {
   // If the legs are spinning...
   if (spinningLegs === true) {
     // Increase the delay for the timeout
-    legsDelay+=50;
+    legsDelay+=additionalSpinningDelay;
     // If the delay is more than 1,5 second...
-    if(legsDelay >= 1500) {
+    if(legsDelay >= maximalSpinningDelay) {
       // Stop the timeout for the spinning
       clearTimeout(spinningLegsTimeout);
       // Stop the timeout that slows down the spinning
@@ -129,7 +133,7 @@ function stopSpinningLegs() {
       spinningLegs = false;
     }
     // Set a timeout that calls this actual function after a certain delay so it does a loop
-    stopLegsTimeout = setTimeout(stopSpinningLegs,100);
+    stopLegsTimeout = setTimeout(stopSpinningLegs,initialSpinningDelay);
   }
 }
 
@@ -141,9 +145,9 @@ function stopSpinningBodies() {
   // If the bodies are spinning...
   if (spinningBodies === true) {
     // Increase the delay for the timeout
-    bodyDelay+=50;
+    bodyDelay+=additionalSpinningDelay;
     // If the delay is more than 1,5 second...
-    if(bodyDelay >= 1500) {
+    if(bodyDelay >= maximalSpinningDelay) {
       // Stop the timeout for the spinning
       clearTimeout(spinningBodiesTimeout);
       // Stop the timeout that slows down the spinning
@@ -151,7 +155,7 @@ function stopSpinningBodies() {
       spinningBodies = false;
     }
     // Set a timeout that calls this actual function after a certain delay so it does a loop
-    stopBodiesTimeout = setTimeout(stopSpinningBodies,100);
+    stopBodiesTimeout = setTimeout(stopSpinningBodies,initialSpinningDelay);
   }
 }
 
@@ -163,9 +167,9 @@ function stopSpinningHeads() {
   // If the heads are spinning...
   if (spinningHeads === true) {
     // Increase the delay for the timeout
-    headDelay+=50;
+    headDelay+=additionalSpinningDelay;
     // If the delay is more than 1,5 second...
-    if(headDelay >= 1500) {
+    if(headDelay >= maximalSpinningDelay) {
       // Stop the timeout for the spinning
       clearTimeout(spinningHeadsTimeout);
       // Stop the timeout that slows down the spinning
@@ -173,6 +177,6 @@ function stopSpinningHeads() {
       spinningHeads = false;
     }
     // Set a timeout that calls this actual function after a certain delay so it does a loop
-    stopHeadsTimeout = setTimeout(stopSpinningHeads,100);
+    stopHeadsTimeout = setTimeout(stopSpinningHeads,initialSpinningDelay);
   }
 }
