@@ -8,31 +8,50 @@ Audrey Coulombe
 A game where you have to generate kids caracters and titles as quick as possible to make more money.
 
 ******************/
-// Variables for the spinning intervals
+// Variables for the spinning timeouts
 let spinningLegsTimeout;
 let spinningBodiesTimeout;
 let spinningHeadsTimeout;
+// Variables for the timeouts that stop the spinning
 let stopLegsTimeout;
 let stopBodiesTimeout;
 let stopHeadsTimeout;
+// Variables that track state of the spinning
+let spinningLegs = false;
+let spinningBodies = false;
+let spinningHeads = false;
+// Variables that set the delay for the spinning timeout
+let legsDelay;
+let bodyDelay;
+let headDelay;
+let initialSpinningDelay = 100;
 
-let legsDelay = 100;
-let bodyDelay = 100;
-let headDelay = 100;
-
+// Run setup when the page is ready
 $(document).ready(setup);
 
 // setup()
 //
-//
+// Hide the body parts
 function setup() {
+  // Hide all the elements with the calss "bodyPartsImages"
   $('.bodyPartsImages').hide();
 }
 
 // spinAll()
 //
+// Function Called when we click on the button "spin all"
+// Sets the spinning states to true and resets the spinning delay
 // Calls functions to spin the legs, bodies and heads all at once
 function spinAll() {
+  // Set the spinning states to true
+  spinningLegs = true;
+  spinningBodies = true;
+  spinningHeads = true;
+  // Reset the spinning delays to the initial value
+  legsDelay = initialSpinningDelay;
+  bodyDelay = initialSpinningDelay;
+  headDelay = initialSpinningDelay;
+  // Spin the legs, the bodies and the heads
   spinLegs();
   spinBodies();
   spinHeads();
@@ -97,17 +116,21 @@ function spinHeads() {
 // Function called when we click on the button "stop spinning legs"
 // It slows down the spinning and then stops it
 function stopSpinningLegs() {
-  // Increase the delay for the timeout
-  legsDelay+=50;
-  // If the delay is more than 1,5 second...
-  if(legsDelay >= 1500) {
-    // Stop the timeout for the spinning
-    clearTimeout(spinningLegsTimeout);
-    // Stop the timeout that slows down the spinning
-    clearTimeout(stopSpinningLegs);
+  // If the legs are spinning...
+  if (spinningLegs === true) {
+    // Increase the delay for the timeout
+    legsDelay+=50;
+    // If the delay is more than 1,5 second...
+    if(legsDelay >= 1500) {
+      // Stop the timeout for the spinning
+      clearTimeout(spinningLegsTimeout);
+      // Stop the timeout that slows down the spinning
+      clearTimeout(stopSpinningLegs);
+      spinningLegs = false;
+    }
+    // Set a timeout that calls this actual function after a certain delay so it does a loop
+    stopLegsTimeout = setTimeout(stopSpinningLegs,100);
   }
-  // Set a timeout that calls this actual function after a certain delay so it does a loop
-  stopLegsTimeout = setTimeout(stopSpinningLegs,100);
 }
 
 // stopSpinningBodies()
@@ -115,17 +138,21 @@ function stopSpinningLegs() {
 // Function called when we click on the button "stop spinning bodies"
 // It slows down the spinning and then stops it
 function stopSpinningBodies() {
-  // Increase the delay for the timeout
-  bodyDelay+=50;
-  // If the delay is more than 1,5 second...
-  if(bodyDelay >= 1500) {
-    // Stop the timeout for the spinning
-    clearTimeout(spinningBodiesTimeout);
-    // Stop the timeout that slows down the spinning
-    clearTimeout(stopSpinningBodies);
+  // If the bodies are spinning...
+  if (spinningBodies === true) {
+    // Increase the delay for the timeout
+    bodyDelay+=50;
+    // If the delay is more than 1,5 second...
+    if(bodyDelay >= 1500) {
+      // Stop the timeout for the spinning
+      clearTimeout(spinningBodiesTimeout);
+      // Stop the timeout that slows down the spinning
+      clearTimeout(stopSpinningBodies);
+      spinningBodies = false;
+    }
+    // Set a timeout that calls this actual function after a certain delay so it does a loop
+    stopBodiesTimeout = setTimeout(stopSpinningBodies,100);
   }
-  // Set a timeout that calls this actual function after a certain delay so it does a loop
-  stopBodiesTimeout = setTimeout(stopSpinningBodies,100);
 }
 
 // stopSpinningHeads()
@@ -133,15 +160,19 @@ function stopSpinningBodies() {
 // Function called when we click on the button "stop spinning heads"
 // It slows down the spinning and then stops it
 function stopSpinningHeads() {
-  // Increase the delay for the timeout
-  headDelay+=50;
-  // If the delay is more than 1,5 second...
-  if(headDelay >= 1500) {
-    // Stop the timeout for the spinning
-    clearTimeout(spinningHeadsTimeout);
-    // Stop the timeout that slows down the spinning
-    clearTimeout(stopSpinningHeads);
+  // If the heads are spinning...
+  if (spinningHeads === true) {
+    // Increase the delay for the timeout
+    headDelay+=50;
+    // If the delay is more than 1,5 second...
+    if(headDelay >= 1500) {
+      // Stop the timeout for the spinning
+      clearTimeout(spinningHeadsTimeout);
+      // Stop the timeout that slows down the spinning
+      clearTimeout(stopSpinningHeads);
+      spinningHeads = false;
+    }
+    // Set a timeout that calls this actual function after a certain delay so it does a loop
+    stopHeadsTimeout = setTimeout(stopSpinningHeads,100);
   }
-  // Set a timeout that calls this actual function after a certain delay so it does a loop
-  stopHeadsTimeout = setTimeout(stopSpinningHeads,100);
 }
