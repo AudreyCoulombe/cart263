@@ -8,94 +8,68 @@ Audrey Coulombe
 A game where you have to generate kids caracters and titles as quick as possible to make more money.
 
 ******************/
-// Initial states of the game
-let legsSpinning = false;
-let bodiesSpinning = false;
-let headsSpinning = false;
-
 // Variables for the spinning intervals
-let spinningLegsInterval;
-let spinningBodiesInterval;
-let spinningHeadsInterval;
+let spinningLegsTimeout;
+let spinningBodiesTimeout;
+let spinningHeadsTimeout;
+let stopLegsTimeout;
+let stopBodiesTimeout;
+let stopHeadsTimeout;
 
+let legsDelay = 100;
+let bodyDelay = 100;
+let headDelay = 100;
 
 $(document).ready(setup);
 
 // setup()
 //
-// Creates Canvas and displays title page
+//
 function setup() {
   $('.bodyPartsImages').hide();
 }
 
-//  mousePressed()
+// spinAll()
 //
-// When the mouse is pressed, checks if we are at the state TITLE.
-// If so, displays the "game" arrangement
-// function mousePressed() {
-//   // If the state is "TITLE"...
-//   if (state === "TITLE") {
-//     // Display the background image
-//     image(backgroundImage, 0, 0, width, height);
-//     // And the buttons
-//     displayButtons();
-//     // And change the state to "GAME"
-//     state = "GAME";
-//   }
-// }
-
-// spinLegsAndStop()
-//
-// Checks if the legs are already spinning or not
-// Spins it when not spinning and vice versa by randomly displaying legs images in the array at an interval of 100 miliseconds
-function spinLegsAndStop() {
-  // If the the legs are not spinning yet
-  if(legsSpinning === false){
-    // Set an interval and store it in a variable
-    spinningLegsInterval = setInterval(function(){
-      let legs = $('.leg');
-      legs.hide();
-      let leg = legs[Math.floor(Math.random()*legs.length)];
-      $(leg).show();
-    }
-    // Set the interval of repetition of the previous function to 100 miliseconds
-    , 100);
-    // And change the state of the legs spinning to true
-    legsSpinning = true;
-  }
-  // (When the button is clicked) if the legs are already moving...
-  else if (legsSpinning===true){
-    // Stop the interval so the image stays visible
-    clearInterval(spinningLegsInterval);
-    // And change the state of the legs spinning to false
-    legsSpinning = false;
-  }
+// Calls functions to spin the legs, bodies and heads all at once
+function spinAll() {
+  spinLegs();
+  spinBodies();
+  spinHeads();
 }
 
-// spinBodiesAndStop()
+// spinLegs()
 //
-// Checks if the bodies are already spinning or not
-// Spins it when not spinning and vice versa by randomly displaying legs images in the array at an interval of 100 miliseconds
-function spinBodiesAndStop() {
-  // If the the bodies are not spinning yet
-  if(bodiesSpinning === false){
-    // Set an interval and store it in a variable
-    spinningBodiesInterval = setInterval(function(){
-      let bodies = $('.body');
-      bodies.hide();
-      let body = bodies[Math.floor(Math.random()*bodies.length)];
-      $(body).show();
-    }
-    // Set the interval of repetition of the previous function to 100 miliseconds
-    , 100);
-    // And change the state of the bodies spinning to true
-    bodiesSpinning = true;
+// Put element with leg class in an "array"
+// Hides and shows random items in that array
+function spinLegs() {
+  // Store all the elements with the class leg in an "array"
+  let legs = $('.leg');
+  // Hide those elements
+  legs.hide();
+  // Choose a random element in the legs array and store it in a variable
+  let leg = legs[Math.floor(Math.random()*legs.length)];
+  // Show that random element
+  $(leg).show();
+  // Set a timeout that calls this actual function after a certain delay so it does a loop
+  // Note: I have to use setTimeout that way instead of setInterval because I want to be able to change my delay variable (possible because the function is called every loop)
+  spinningLegsTimeout = setTimeout(spinLegs, legsDelay);
+}
+
+// stopSpinningLegs()
+//
+// Function called when we click on the button "stop spinning legs"
+// It slows down the spinning and then stops it
+function stopSpinningLegs() {
+  // Increase the delay for the timeout
+  legsDelay+=50;
+  // If the delay is more than 1,5 second...
+  if(legsDelay >= 1500) {
+    // Stop the timeout for the spinning
+    clearTimeout(spinningLegsTimeout);
+    // Stop the timeout for that slows down the spinning
+    clearTimeout(stopSpinningLegs);
   }
-  // (When the button is clicked) if the bodies are already moving...
-  else if (bodiesSpinning===true){
-    // Stop the interval so the image stays visible
-    clearInterval(spinningBodiesInterval);
-    // And change the state of the bodies spinning to false
-    bodiesSpinning = false;
-  }
+  // Set a timeout that calls this actual function after a certain delay so it does a loop
+  stopLegsTimeout = setTimeout(stopSpinningLegs,100);
 }

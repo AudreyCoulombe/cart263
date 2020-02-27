@@ -33,9 +33,11 @@
     <!-- background image -->
     <img id="background" src ="assets/images/backgroundLandscape.png">
 
-    <button id=headsButton onclick="spinHeadsAndStop()">Spin the heads</button>
-    <button id=bodiesButton onclick="spinBodiesAndStop()">Spin the bodies</button>
-    <button id=legsButton onclick="spinLegsAndStop()">Spin the legs</button>
+    <button id=spinButton onclick="spinAll()">Spin body parts</button>
+
+    <button id=headsButton onclick="stopSpinningHeads()">Stop spinning heads</button>
+    <button id=bodiesButton onclick="stopSpinningBodies()">Stop spinning bodies</button>
+    <button id=legsButton onclick="stopSpinningLegs()">Stop spinning legs</button>
 
     <div id = "legs">
       <img id="doraLegs" class="leg bodyPartsImages" src ="assets/images/legDora.png">
