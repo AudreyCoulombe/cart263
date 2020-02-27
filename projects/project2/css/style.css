@@ -11,6 +11,14 @@ body {
   margin: 0;
 }
 
+#background {
+  position: relative;
+  left: 0px;
+  top: 0px;
+  width:1400px;
+  height: 750px;
+}
+
 button {
   position:absolute;
   left: 350px;
@@ -27,14 +35,22 @@ button {
   display: none;
 }
 
-#heads {
+.bodyPartsImages {
+  position:absolute;
+  left: 480px;
+  top: 188px;
+  width: 440px;
+  height: 375px;
+}
+
+#headsButton {
   top: 300px;
 }
 
-#bodies {
+#bodiesButton {
   top: 400px;
 }
 
-#legs {
+#legsButton {
   top: 500px;
 }

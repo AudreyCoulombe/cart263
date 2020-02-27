@@ -8,9 +8,21 @@
     <link rel="stylesheet" type="text/css" href="css/style.css" />
 
     <!-- Library script(s) -->
-    <script src="js/libraries/p5.min.js"></script>
-    <script src="js/libraries/p5.sound.min.js"></script>
-    <script src="js/libraries/p5.dom.min.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+
+  <script
+    src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+    integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+    crossorigin="anonymous"></script>
+
     <!-- (not sure yet I'm gonna use it) <script src='https://code.responsivevoice.org/responsivevoice.js'></script> -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
     <!-- My script(s) -->
@@ -18,9 +30,40 @@
   </head>
 
   <body>
-    <button id=heads onclick="spinHeadsAndStop()">Spin the heads</button>
-    <button id=bodies onclick="spinBodiesAndStop()">Spin the bodies</button>
-    <button id=legs onclick="spinLegsAndStop()">Spin the legs</button>
+    <!-- background image -->
+    <img id="background" src ="assets/images/backgroundLandscape.png">
+    <!-- <button id=headsButton onclick="spinHeadsAndStop()">Spin the heads</button>
+    <button id=bodiesButton onclick="spinBodiesAndStop()">Spin the bodies</button>
+    <button id=legsButton onclick="spinLegsAndStop()">Spin the legs</button> -->
+    <button id="headsButton">Spin the heads</button>
+    <button id="bodiesButton">Spin the bodies</button>
+    <button id="legsButton">Spin the legs</button>
+
+    <div id = "heads">
+      <img id="dorabody" class="bodyPartsImages" src="assets/images/headDora.png">
+      <img id="elmobody" class="bodyPartsImages" src ="assets/images/headElmo.png">
+      <img id="minionBody" class="bodyPartsImages" src ="assets/images/headMomo.png">
+      <img id="peppaPigBody" class="bodyPartsImages" src ="assets/images/headPeppaPig.png">
+      <img id="warriorBody" class="bodyPartsImages" src ="assets/images/headPo.png">
+    </div>
+
+    <div id = "bodies">
+      <img id="dorabody" class="bodyPartsImages" src ="assets/images/bodyDora.png">
+      <img id="elmobody" class="bodyPartsImages" src ="assets/images/bodyElmo.png">
+      <img id="minionBody" class="bodyPartsImages" src ="assets/images/bodyMinion.png">
+      <img id="peppaPigBody" class="bodyPartsImages" src ="assets/images/bodyPeppaPig.png">
+      <img id="warriorBody" class="bodyPartsImages" src ="assets/images/bodyWarrior.png">
+    </div>
+
+    <div id = "legs">
+      <img id="doraLegs" class="bodyPartsImages" src ="assets/images/legDora.png">
+      <img id="elmoLegs" class="bodyPartsImages" src ="assets/images/legElmo.png">
+      <img id="mickeyLegs" class="bodyPartsImages" src ="assets/images/legMickey.png">
+      <img id="peppaPigLegs" class="bodyPartsImages" src ="assets/images/legPeggaPig.png">
+      <img id="sexyLegs" class="bodyPartsImages" src ="assets/images/legSexy.png">
+    </div>
+
+
   </body>
 
 </html>
