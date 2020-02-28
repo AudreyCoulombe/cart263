@@ -40,7 +40,6 @@ button {
   top: 188px;
   width: 440px;
   height: 375px;
-  /* visibility: hidden; */
 }
 
 #headsButton {
@@ -58,4 +57,32 @@ button {
 #spinButton {
   top:100px;
   left: 650px;
+}
+
+#results {
+  position:absolute;
+  top:0px;
+  left: 1050px;
+  height: 750px;
+  width: 350px;
+  border-style: solid;
+  color:red;
+  overflow-y: scroll;
+}
+
+#results img {
+  position:absolute;
+  top:0px;
+  left:0px;
+  width: 110px;
+  height: 94px;
+}
+
+#results div {
+  float:left;
+  position: relative;
+  /* border-style: solid;
+  color:black; */
+  width: 110px;
+  height: 94px;
 }
