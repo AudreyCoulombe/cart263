@@ -11,6 +11,32 @@ body {
   margin: 0;
 }
 
+#startPage {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width:1400px;
+  height: 750px;
+  z-index: 2;
+}
+#startPageImage {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width:1400px;
+  height: 750px;
+  z-index: 2;
+}
+
+#startPageGif {
+  position: absolute;
+  left: 0px;
+  top: 170px;
+  width:480px;
+  height: 580px;
+  z-index: 2;
+}
+
 #background {
   position: relative;
   left: 0px;

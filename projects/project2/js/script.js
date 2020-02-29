@@ -60,13 +60,23 @@ let commands = {
   'Stop spinning heads': stopSpinningHeads
 };
 
-// Run setup when the page is ready
-$(document).ready(setup);
+// Run the startPage() function when the page is ready
+$(document).ready(startPage);
+
+// startPage()
+//
+// Run the setup when we click on the page
+function startPage() {
+  // Run the setup when we click on the div with the id "startPage"
+  $('#startPage').on('click',setup);
+}
 
 // setup()
 //
-// Hide the body parts and draws the miniaturized character
+// Remove the start page, handle voice commands, hide the body parts, check if a turn is finished and spin the body parts
 function setup() {
+  // Remove the div with the id "start page"
+  $( "#startPage" ).remove();
   // Set the vocal commands and start listening with annyang
   handleVocalCommands();
   // Hide all the elements with the calss "bodyPartsImages"
@@ -74,7 +84,7 @@ function setup() {
   // Each milisecond, checks if the player finished a turn
   setInterval(checkEndOfTurn, 1);
   // Spin the body parts
-  // spinAll();
+  spinAll();
 }
 
 // handleVocalCommands()
@@ -90,8 +100,8 @@ function handleVocalCommands() {
 
 // spinAll()
 //
-// Function called when we click on the button "spin all"
-// If the body parts are not spinning, adds one to the turn number,resets the spinning delay
+// Function called when we click on the button "spin"
+// If the body parts are not spinning, adds one to the turn number, resets the spinning delay
 // and calls functions to spin the legs, bodies and heads
 function spinAll() {
   // If the body parts are not spinning...
@@ -111,8 +121,8 @@ function spinAll() {
 
 // spinLegs()
 //
-// Put element with leg class in an "array"
-// Hides and shows random items in that array
+// Put element with leg class in an "array" and hides and shows random items in that array
+// Plays the spinning sound
 function spinLegs() {
   // Set the spinning state to true
   spinningLegs = true;
@@ -133,8 +143,8 @@ function spinLegs() {
 
 // spinBodies()
 //
-// Put element with body class in an "array"
-// Hides and shows random items in that array
+// Put element with body class in an "array" and hides and shows random items in that array
+// Plays the spinning sound
 function spinBodies() {
   // Set the spinning state to true
   spinningBodies = true;
@@ -154,8 +164,8 @@ function spinBodies() {
 
 // spinHeads()
 //
-// Put element with head class in an "array"
-// Hides and shows random items in that array
+// Put element with head class in an "array" and hides and shows random items in that array
+// Plays the spinning sound
 function spinHeads() {
   // Set the spinning state to true
   spinningHeads = true;
