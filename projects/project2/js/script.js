@@ -44,7 +44,7 @@ let score = 0;
 // Number of points you get when you end a turn
 let scoreGain = 20;
 // The frequencies for the slot machine sound
-let spinningFrequencies = [880,987.77,554.37,587.33,659.25,739.99,783.99];
+let spinningFrequencies = [880, 987.77, 554.37, 587.33, 659.25, 739.99, 783.99];
 // The note that will play the frequencies above
 let spinningNote = new Pizzicato.Sound({
   source: 'wave',
@@ -52,6 +52,13 @@ let spinningNote = new Pizzicato.Sound({
 // The sounds when you gain coins
 let coinSound = new Audio("assets/sounds/coinSound.wav");
 let chaChingSound = new Audio("assets/sounds/chaChing.wav");
+// An object literal containing the different vocal commands and the functions that are called
+let commands = {
+  'Spin': spinAll,
+  'Stop spinning legs': stopSpinningLegs,
+  'Stop spinning bodies': stopSpinningBodies,
+  'Stop spinning heads': stopSpinningHeads
+};
 
 // Run setup when the page is ready
 $(document).ready(setup);
@@ -60,12 +67,25 @@ $(document).ready(setup);
 //
 // Hide the body parts and draws the miniaturized character
 function setup() {
+  // Set the vocal commands and start listening with annyang
+  handleVocalCommands();
   // Hide all the elements with the calss "bodyPartsImages"
   $('.bodyPartsImages').hide();
   // Each milisecond, checks if the player finished a turn
   setInterval(checkEndOfTurn, 1);
   // Spin the body parts
   // spinAll();
+}
+
+// handleVocalCommands()
+//
+// Set the vocal commands and starts listening with annyang
+// * Used same function as in assignment 3
+function handleVocalCommands() {
+  // Add my commands to annyang
+  annyang.addCommands(commands);
+  // Start listening with annyang
+  annyang.start();
 }
 
 // spinAll()
@@ -101,7 +121,7 @@ function spinLegs() {
   // Hide those elements
   legs.hide();
   // Choose a random element in the legs array and store it in a variable
-  leg = legs[Math.floor(Math.random()*legs.length)];
+  leg = legs[Math.floor(Math.random() * legs.length)];
   // Show that random element
   $(leg).show();
   // Play the spinning sound
@@ -123,7 +143,7 @@ function spinBodies() {
   // Hide those elements
   bodies.hide();
   // Choose a random element in the bodies array and store it in a variable
-  body = bodies[Math.floor(Math.random()*bodies.length)];
+  body = bodies[Math.floor(Math.random() * bodies.length)];
   // Show that random element
   $(body).show();
   // Play the spinning sound
@@ -144,7 +164,7 @@ function spinHeads() {
   // Hide those elements
   heads.hide();
   // Choose a random element in the heads array and store it in a variable
-  head = heads[Math.floor(Math.random()*heads.length)];
+  head = heads[Math.floor(Math.random() * heads.length)];
   // Show that random element
   $(head).show();
   // Play the spinning sound
@@ -161,9 +181,9 @@ function stopSpinningLegs() {
   // If the legs are spinning...
   if (spinningLegs === true) {
     // Increase the delay for the timeout
-    legsDelay+=additionalSpinningDelay;
+    legsDelay += additionalSpinningDelay;
     // If the delay is more than 1,5 second...
-    if(legsDelay >= maximalSpinningDelay) {
+    if (legsDelay >= maximalSpinningDelay) {
       // Stop the timeout for the spinning
       clearTimeout(spinningLegsTimeout);
       // Stop the timeout that slows down the spinning
@@ -174,7 +194,7 @@ function stopSpinningLegs() {
       spinningLegs = false;
     }
     // Set a timeout that calls this actual function after a certain delay so it does a loop
-    stopLegsTimeout = setTimeout(stopSpinningLegs,initialSpinningDelay);
+    stopLegsTimeout = setTimeout(stopSpinningLegs, initialSpinningDelay);
   }
 }
 
@@ -186,9 +206,9 @@ function stopSpinningBodies() {
   // If the bodies are spinning...
   if (spinningBodies === true) {
     // Increase the delay for the timeout
-    bodyDelay+=additionalSpinningDelay;
+    bodyDelay += additionalSpinningDelay;
     // If the delay is more than 1,5 second...
-    if(bodyDelay >= maximalSpinningDelay) {
+    if (bodyDelay >= maximalSpinningDelay) {
       // Stop the timeout for the spinning
       clearTimeout(spinningBodiesTimeout);
       // Stop the timeout that slows down the spinning
@@ -199,7 +219,7 @@ function stopSpinningBodies() {
       spinningBodies = false;
     }
     // Set a timeout that calls this actual function after a certain delay so it does a loop
-    stopBodiesTimeout = setTimeout(stopSpinningBodies,initialSpinningDelay);
+    stopBodiesTimeout = setTimeout(stopSpinningBodies, initialSpinningDelay);
   }
 }
 
@@ -211,9 +231,9 @@ function stopSpinningHeads() {
   // If the heads are spinning...
   if (spinningHeads === true) {
     // Increase the delay for the timeout
-    headDelay+=additionalSpinningDelay;
+    headDelay += additionalSpinningDelay;
     // If the delay is more than 1,5 second...
-    if(headDelay >= maximalSpinningDelay) {
+    if (headDelay >= maximalSpinningDelay) {
       // Stop the timeout for the spinning
       clearTimeout(spinningHeadsTimeout);
       // Stop the timeout that slows down the spinning
@@ -224,7 +244,7 @@ function stopSpinningHeads() {
       spinningHeads = false;
     }
     // Set a timeout that calls this actual function after a certain delay so it does a loop
-    stopHeadsTimeout = setTimeout(stopSpinningHeads,initialSpinningDelay);
+    stopHeadsTimeout = setTimeout(stopSpinningHeads, initialSpinningDelay);
   }
 }
 
@@ -253,18 +273,18 @@ function checkEndOfTurn() {
 // At the end of each new turn, clone the final body parts, remove their classes and add them in a div your created.
 // Then, prepend that div to the one that has the id "results"
 function drawMiniaturizedCharacter() {
-      // Create a new div and store it in a variable
-      let $characterContainer = document.createElement("DIV");
-      // Clone the final body parts, append them to the new div and store the clones in variables
-      let $miniLeg = $(finalLeg).clone(false).appendTo($characterContainer);
-      let $miniBody = $(finalBody).clone(false).appendTo($characterContainer);
-      let $miniHead = $(finalHead).clone(false).appendTo($characterContainer);
-      // Remove the classes from the clones
-      $($miniLeg).removeClass();
-      $($miniBody).removeClass();
-      $($miniHead).removeClass();
-      // And insert the new div at the beginning of the one with the id "results"
-      $($characterContainer).prependTo('#results');
+  // Create a new div and store it in a variable
+  let $characterContainer = document.createElement("DIV");
+  // Clone the final body parts, append them to the new div and store the clones in variables
+  let $miniLeg = $(finalLeg).clone(false).appendTo($characterContainer);
+  let $miniBody = $(finalBody).clone(false).appendTo($characterContainer);
+  let $miniHead = $(finalHead).clone(false).appendTo($characterContainer);
+  // Remove the classes from the clones
+  $($miniLeg).removeClass();
+  $($miniBody).removeClass();
+  $($miniHead).removeClass();
+  // And insert the new div at the beginning of the one with the id "results"
+  $($characterContainer).prependTo('#results');
 }
 
 // updateScore()
@@ -272,7 +292,7 @@ function drawMiniaturizedCharacter() {
 //
 function updateScore() {
   // For each point gained...
-  for (let i = 0; i<scoreGain; i++) {
+  for (let i = 0; i < scoreGain; i++) {
     // Create an image tag with the class "animatedCoin" that contains the coin image
     let coinImg = $('<img/>', {
       class: 'animatedCoin',
@@ -283,7 +303,7 @@ function updateScore() {
     // Declare a variable for the duration of the animation of the coin
     let animationDuration = 100;
     // Declare a variable that will set a delay to animate the coin images and sounds one after the other. Inspired by this example: https://stackoverflow.com/questions/21572326/jquery-animate-multiple-elements-with-delay
-    let coinDelay = i*animationDuration;
+    let coinDelay = i * animationDuration;
     // Animate the image after the coin delay (related to i)
     coinImg.delay(coinDelay).animate({
       // Move to the left
@@ -295,7 +315,7 @@ function updateScore() {
     // Play the coin sound after a delay (related to i)
     setTimeout(playCoinSound, coinDelay);
     // After a delay related to i (so the score animates)...
-    setTimeout(function(){
+    setTimeout(function() {
       // Add one to the score
       score += 1;
       // And display the new score
@@ -308,13 +328,13 @@ function updateScore() {
 //
 // Generates a sound similar to a slot machine with Pizzicato by playing random frequencies
 // * Used the code of the Music Box activity
-function spinningSound(){
-    // Pick a random frequency from the array
-    let frequency = spinningFrequencies[Math.floor(Math.random() * spinningFrequencies.length)];
-    // Set that frequency to our note variable that produces a wave
-    spinningNote.frequency = frequency;
-    // Play the note
-    spinningNote.play();
+function spinningSound() {
+  // Pick a random frequency from the array
+  let frequency = spinningFrequencies[Math.floor(Math.random() * spinningFrequencies.length)];
+  // Set that frequency to our note variable that produces a wave
+  spinningNote.frequency = frequency;
+  // Play the note
+  spinningNote.play();
 }
 
 // playCoinSound()
