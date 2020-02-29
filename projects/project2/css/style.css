@@ -86,3 +86,31 @@ button {
   width: 110px;
   height: 94px;
 }
+
+#score {
+  position: absolute;
+  left:20px;
+  top:20px;
+  font-family: Impact, Charcoal, sans-serif;
+  font-size: 25px;
+}
+
+.animatedCoin {
+  position: absolute;
+  left:0px;
+  right: 0px;
+  bottom:0px;
+  top: 0px;
+  width:50px;
+  height:50px;
+}
+
+#animatedCoin {
+  width:50px;
+  height:50px;
+  position: absolute;
+  left:675px;
+  top: 350px;
+  border-style: solid;
+  color:red;
+}

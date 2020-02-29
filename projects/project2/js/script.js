@@ -39,6 +39,10 @@ let maximalSpinningDelay = 1500;
 let turn = 0;
 // Variable used to check if we are playing a new turn
 let turnCount;
+// Variable that keeps track of the score
+let score = 0;
+// Number of points you get when you end a turn
+let scoreGain = 20;
 
 // Run setup when the page is ready
 $(document).ready(setup);
@@ -216,6 +220,7 @@ function drawMiniaturizedCharacter() {
   if (spinningLegs === false && spinningBodies === false && spinningHeads === false && turn !== 0) {
     // If we changed turn (the turn count is different from the turn number)...
     if (turnCount !== turn) {
+      updateScore();
       // Create a new div and store it in a variable
       let $characterContainer = document.createElement("DIV");
       // Clone the final body parts, append them to the new div and store the clones in variables
@@ -231,5 +236,33 @@ function drawMiniaturizedCharacter() {
     }
     // Set the turn count to the turn number
     turnCount = turn;
+  }
+}
+
+// updateScore()
+//
+//
+function updateScore() {
+  // Add the score gain to the score
+  score += scoreGain;
+  // Display the new score
+  $('#score').text(score);
+  // For each point gained...
+  for (let i = 0; i<scoreGain; i++) {
+    // Create an image tag with the class "animatedCoin" that displays the coin image
+    let coinImg = $('<img/>', {
+      class: 'animatedCoin',
+      src: 'assets/images/coin.png'
+    });
+    // Add this image to the div with the id "animatedCoin"
+    coinImg.appendTo($('#animatedCoin'));
+    // Animate the image after a delay related to the number of coined displayed (so they animate one after the other instead of all at the same time). Inspired by this example: https://stackoverflow.com/questions/21572326/jquery-animate-multiple-elements-with-delay
+    coinImg.delay(i*100).animate({
+      // Move to the left
+      left: ["-=300", "swing"],
+      // And to the top
+      top: ["-=300", "swing"],
+      // The animation lasts 100 miliseconds
+    }, 100);
   }
 }
