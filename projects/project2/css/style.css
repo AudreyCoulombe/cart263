@@ -117,8 +117,8 @@ button {
   position: absolute;
   left:590px;
   top: 420px;
-  border-style: solid;
-  color:red;
+  /* border-style: solid;
+  color:red; */
 }
 
 #scoreCoinImg {

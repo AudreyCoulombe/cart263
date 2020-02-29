@@ -53,8 +53,8 @@ $(document).ready(setup);
 function setup() {
   // Hide all the elements with the calss "bodyPartsImages"
   $('.bodyPartsImages').hide();
-  // Each milisecond, checks if it is time to draw the miniaturized character
-  setInterval(drawMiniaturizedCharacter, 1);
+  // Each milisecond, checks if the player finished a turn
+  setInterval(checkEndOfTurn, 1);
 }
 
 // spinAll()
@@ -211,16 +211,29 @@ function stopSpinningHeads() {
   }
 }
 
+// checkEndOfTurn()
+// A function that checks if the player finished a turn
+// If so, updates the score and draw the miniaturized version of the character
+function checkEndOfTurn() {
+  // If the body parts are not spinning and if it's not the turn 0...
+  if (spinningLegs === false && spinningBodies === false && spinningHeads === false && turn !== 0) {
+    // And if we changed turn (the turn count is different from the turn number)...
+    if (turnCount !== turn) {
+      // Display the new score and animate the coins
+      updateScore();
+      // Draw the miniaturized version of the final character
+      drawMiniaturizedCharacter();
+    }
+    // Set the turn count to the turn number
+    turnCount = turn;
+  }
+}
+
 // drawMiniaturizedCharacter()
 //
 // At the end of each new turn, clone the final body parts, remove their classes and add them in a div your created.
 // Then, prepend that div to the one that has the id "results"
 function drawMiniaturizedCharacter() {
-  // If the body parts are not spinning and if it's not the turn 0...
-  if (spinningLegs === false && spinningBodies === false && spinningHeads === false && turn !== 0) {
-    // If we changed turn (the turn count is different from the turn number)...
-    if (turnCount !== turn) {
-      updateScore();
       // Create a new div and store it in a variable
       let $characterContainer = document.createElement("DIV");
       // Clone the final body parts, append them to the new div and store the clones in variables
@@ -233,10 +246,6 @@ function drawMiniaturizedCharacter() {
       $($miniHead).removeClass();
       // And insert the new div at the beginning of the one with the id "results"
       $($characterContainer).prependTo('#results');
-    }
-    // Set the turn count to the turn number
-    turnCount = turn;
-  }
 }
 
 // updateScore()
@@ -249,7 +258,7 @@ function updateScore() {
   $('#score').text(score);
   // For each point gained...
   for (let i = 0; i<scoreGain; i++) {
-    // Create an image tag with the class "animatedCoin" that displays the coin image
+    // Create an image tag with the class "animatedCoin" that contains the coin image
     let coinImg = $('<img/>', {
       class: 'animatedCoin',
       src: 'assets/images/coin.png'
@@ -259,9 +268,9 @@ function updateScore() {
     // Animate the image after a delay related to the number of coined displayed (so they animate one after the other instead of all at the same time). Inspired by this example: https://stackoverflow.com/questions/21572326/jquery-animate-multiple-elements-with-delay
     coinImg.delay(i*100).animate({
       // Move to the left
-      left: ["-=300", "swing"],
+      left: ["-=470", "swing"],
       // And to the top
-      top: ["-=300", "swing"],
+      top: ["-=312", "swing"],
       // The animation lasts 100 miliseconds
     }, 100);
   }
