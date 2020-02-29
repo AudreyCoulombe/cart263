@@ -43,6 +43,15 @@ let turnCount;
 let score = 0;
 // Number of points you get when you end a turn
 let scoreGain = 20;
+// The frequencies for the slot machine sound
+let spinningFrequencies = [880,987.77,554.37,587.33,659.25,739.99,783.99];
+// The note that will play the frequencies above
+let spinningNote = new Pizzicato.Sound({
+  source: 'wave',
+});
+// The sounds when you gain coins
+let coinSound = new Audio("assets/sounds/coinSound.wav");
+let chaChingSound = new Audio("assets/sounds/chaChing.wav");
 
 // Run setup when the page is ready
 $(document).ready(setup);
@@ -55,6 +64,8 @@ function setup() {
   $('.bodyPartsImages').hide();
   // Each milisecond, checks if the player finished a turn
   setInterval(checkEndOfTurn, 1);
+  // Spin the body parts
+  // spinAll();
 }
 
 // spinAll()
@@ -93,6 +104,8 @@ function spinLegs() {
   leg = legs[Math.floor(Math.random()*legs.length)];
   // Show that random element
   $(leg).show();
+  // Play the spinning sound
+  spinningSound();
   // Set a timeout that calls this actual function after a certain delay so it does a loop
   // Note: I have to use setTimeout that way instead of setInterval because I want to be able to change my delay variable (possible because the function is called every loop)
   spinningLegsTimeout = setTimeout(spinLegs, legsDelay);
@@ -113,6 +126,8 @@ function spinBodies() {
   body = bodies[Math.floor(Math.random()*bodies.length)];
   // Show that random element
   $(body).show();
+  // Play the spinning sound
+  spinningSound();
   // Set a timeout that calls this actual function after a certain delay so it does a loop
   spinningBodiesTimeout = setTimeout(spinBodies, bodyDelay);
 }
@@ -132,6 +147,8 @@ function spinHeads() {
   head = heads[Math.floor(Math.random()*heads.length)];
   // Show that random element
   $(head).show();
+  // Play the spinning sound
+  spinningSound();
   // Set a timeout that calls this actual function after a certain delay so it does a loop
   spinningHeadsTimeout = setTimeout(spinHeads, headDelay);
 }
@@ -217,6 +234,8 @@ function stopSpinningHeads() {
 function checkEndOfTurn() {
   // If the body parts are not spinning and if it's not the turn 0...
   if (spinningLegs === false && spinningBodies === false && spinningHeads === false && turn !== 0) {
+    // Stop playing the spinning notes
+    spinningNote.stop();
     // And if we changed turn (the turn count is different from the turn number)...
     if (turnCount !== turn) {
       // Display the new score and animate the coins
@@ -252,10 +271,6 @@ function drawMiniaturizedCharacter() {
 //
 //
 function updateScore() {
-  // Add the score gain to the score
-  score += scoreGain;
-  // Display the new score
-  $('#score').text(score);
   // For each point gained...
   for (let i = 0; i<scoreGain; i++) {
     // Create an image tag with the class "animatedCoin" that contains the coin image
@@ -265,13 +280,49 @@ function updateScore() {
     });
     // Add this image to the div with the id "animatedCoin"
     coinImg.appendTo($('#animatedCoin'));
-    // Animate the image after a delay related to the number of coined displayed (so they animate one after the other instead of all at the same time). Inspired by this example: https://stackoverflow.com/questions/21572326/jquery-animate-multiple-elements-with-delay
-    coinImg.delay(i*100).animate({
+    // Declare a variable for the duration of the animation of the coin
+    let animationDuration = 100;
+    // Declare a variable that will set a delay to animate the coin images and sounds one after the other. Inspired by this example: https://stackoverflow.com/questions/21572326/jquery-animate-multiple-elements-with-delay
+    let coinDelay = i*animationDuration;
+    // Animate the image after the coin delay (related to i)
+    coinImg.delay(coinDelay).animate({
       // Move to the left
       left: ["-=470", "swing"],
       // And to the top
       top: ["-=312", "swing"],
       // The animation lasts 100 miliseconds
-    }, 100);
+    }, animationDuration);
+    // Play the coin sound after a delay (related to i)
+    setTimeout(playCoinSound, coinDelay);
+    // After a delay related to i (so the score animates)...
+    setTimeout(function(){
+      // Add one to the score
+      score += 1;
+      // And display the new score
+      $('#score').text(score);
+    }, coinDelay);
   }
+}
+
+// spinningSound()
+//
+// Generates a sound similar to a slot machine with Pizzicato by playing random frequencies
+// * Used the code of the Music Box activity
+function spinningSound(){
+    // Pick a random frequency from the array
+    let frequency = spinningFrequencies[Math.floor(Math.random() * spinningFrequencies.length)];
+    // Set that frequency to our note variable that produces a wave
+    spinningNote.frequency = frequency;
+    // Play the note
+    spinningNote.play();
+}
+
+// playCoinSound()
+//
+// Plays the sound of a coin dropping and the sound of a cash register
+function playCoinSound() {
+  // Play the sound of a coin dropping
+  coinSound.play();
+  // And play the "cha ching" sound of a cash register
+  chaChingSound.play();
 }
