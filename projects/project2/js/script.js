@@ -2,10 +2,10 @@
 
 /*****************
 
-Character generator
+Kid's Character Generator
 Audrey Coulombe
 
-A game where you have to generate kids caracters and titles as quick as possible to make more money.
+A game that allows you have to generate characters for kids in order to make money.
 
 ******************/
 // Variables for the image that is displayed
