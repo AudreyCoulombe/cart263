@@ -46,28 +46,42 @@ function gotData(data) {
     verb = 'are';
   }
 
+  // Same for the color
+  let colorData = getRandomElement(data.colors);
+  // Get the color name inside the color object
+  let colorName = colorData.color;
+  // Assume the indefinite article before the color is a
+  let indefiniteArticleColor = "a";
+  // A variable that contains the first letter of the color
+  let colorFirstLetter = colorName.charAt(0);
+  // If the first letter of the color is a voyel...
+  if (colorFirstLetter === 'A' || colorFirstLetter === 'E' || colorFirstLetter === 'I' || colorFirstLetter === 'O' || colorFirstLetter === 'U' || colorFirstLetter === 'Y') {
+    // Change the indefinite article to "an"
+    indefiniteArticleColor = "an";
+  }
+
   // Now the cat
   let cat = getRandomElement(data.cats);
 
   // Same again for room
   let room = getRandomElement(data.rooms);
-
-  // Same for the color
-  let colorData = getRandomElement(data.colors);
-  // Get the color name inside the color object
-  let colorName = colorData.color;
-  // Display the color name in the console
-  console.log(colorName);
+  // Assume the indefinite article before the room is a
+  let indefiniteArticleRoom = "a";
+  // A variable that contains the first letter of the room
+  let roomFirstLetter = room.charAt(0);
+  // If the first letter of the room is a voyel...
+  if (roomFirstLetter === 'a' || roomFirstLetter === 'e' || roomFirstLetter === 'i' || roomFirstLetter === 'o' || roomFirstLetter === 'u' || roomFirstLetter === 'y') {
+    // Change the indefinite article to "an"
+    indefiniteArticleRoom = "an";
+  }
 
   // Get a random element in the games data
   let boardGame = getRandomElement(data.games)
-  // Display the game in the console
-  console.log(boardGame);
 
   // Now we can construct our description with a template string
   // We have the basic structure of a sentence and we substitute in the
   // values we've just calculated
-  let description = `${condiment} ${verb} like a ${colorName} ${cat} in a ${room} playing ${boardGame}.`;
+  let description = `${condiment} ${verb} like ${indefiniteArticleColor} ${colorName} ${cat} in ${indefiniteArticleRoom} ${room} playing ${boardGame}.`;
 
   // Finally, we add it to the page and hey presto!
   $('body').append(description)
