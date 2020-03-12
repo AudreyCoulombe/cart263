@@ -52,6 +52,18 @@ function gotData(data) {
   // Same again for room
   let room = getRandomElement(data.rooms);
 
+  // Same for the color
+  let colorData = getRandomElement(data.colors);
+  // Get the color name inside the color object
+  let colorName = colorData.color;
+  // Display the color name in the console
+  console.log(colorName);
+
+  // Get a random element in the games data
+  let boardGame = getRandomElement(data.games)
+  // Display the game in the console
+  console.log(boardGame);
+
   // Now we can construct our description with a template string
   // We have the basic structure of a sentence and we substitute in the
   // values we've just calculated
