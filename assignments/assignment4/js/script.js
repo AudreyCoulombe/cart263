@@ -67,7 +67,7 @@ function gotData(data) {
   // Now we can construct our description with a template string
   // We have the basic structure of a sentence and we substitute in the
   // values we've just calculated
-  let description = `${condiment} ${verb} like a ${cat} in a ${room}.`;
+  let description = `${condiment} ${verb} like a ${colorName} ${cat} in a ${room} playing ${boardGame}.`;
 
   // Finally, we add it to the page and hey presto!
   $('body').append(description)
