@@ -9,4 +9,25 @@ so the canvas is flush with the top left corner.
 body {
   padding: 0;
   margin: 0;
+  width: 2000px;
+  height: 2000px;
+}
+
+#player {
+	  position: absolute;
+	  top: 0px;
+	  left: 0px;
+	  width: 153.667px;
+	  height: 152px;
+	  /* background: url('http://127.0.0.1:61203/assets/images/playerSpriteSheet.png') no-repeat; */
+    background: url('../assets/images/playerSpriteSheet.png') no-repeat;
+}
+#player.standing {
+  background-position: 0px 0px;
+}
+#player.leftFoot {
+  background-position: -153.667px 0px;
+}
+#player.rightFoot {
+  background-position: -307.333px 0px;
 }
