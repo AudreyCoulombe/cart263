@@ -32,7 +32,8 @@ let currentWalkFrame = 0;
 // Player velocity variables
 let velocityX;
 let velocityY;
-
+// Player rotation angle (in radians)
+let playerRotation;
 
 // When the page is ready...
 $(document).ready(function() {
@@ -55,24 +56,33 @@ function mousePlayerPosition() {
     mousePosition.top = event.pageY;
   });
   // console.log("mouse left: " + mousePosition.left + ", mouse top: " + mousePosition.top);
-  // Calculate the X & Y distance between the mouse and the player
-  let distanceX = mousePosition.left - playerPosition.left;
-  let distanceY = mousePosition.top - playerPosition.top;
+  // Calculate the X & Y distance between the mouse and the center of the player
+  let distanceX = mousePosition.left - playerPosition.left - $("#player").width()/2;
+  let distanceY = mousePosition.top - playerPosition.top - $("#player").height()/2;
   // Use pythagorean theorem to calculate the distance between the mouse and the player
   let distance = Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY,2));
-  // console.log("distance: " + distance + "distanceX: " + distanceX + "distanceY: " + distanceY);
+  console.log("distance: " + distance + "distanceX: " + distanceX + "distanceY: " + distanceY);
   // Set velocity X & Y according to the distance X & Y
   velocityX = distanceX/10;
   velocityY = distanceY/10;
   // console.log("velocityX: " + velocityX + ", velocityY: " + velocityY);
-  // If the distance between player and mouse is less or equal to 10px...
-  if (distance <= 10) {
+  // Set the player rotation angle according the X & Y distance with the mouse
+  playerRotation = Math.atan(distanceY/distanceX) + Math.PI/2;
+  // If the distanceX is negative...
+  if(distanceX < 0) {
+    // Add pi randians to the rotation angle (180 degrees)
+    playerRotation += Math.PI;
+  }
+  // If the distance between player and mouse is less or equal to 50px...
+  if (distance <= 50) {
     // Set the player moving state to false
     playerMoving = false;
   }
   else {
     // Else, set the player moving state to true
     playerMoving = true;
+    // And rotate the player according to the mouse position
+    $('#player').css({transform: 'rotate('+playerRotation+'rad)'});
   }
 }
 
@@ -83,7 +93,7 @@ function walk() {
   // If the player has to move/is moving...
   if (playerMoving === true) {
     // Move the player by adding velocity to its top and left position
-    $("#player").offset({ top: playerPosition.top+velocityY, left: playerPosition.left+velocityX });
+    $("#player").offset({ top: playerPosition.top + velocityY, left: playerPosition.left + velocityX });
     // Remove the player's class
     $('#player').removeAttr('class');
     // And add a new class corresponding to the current walk frame

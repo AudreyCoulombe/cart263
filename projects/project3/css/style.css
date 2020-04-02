@@ -16,11 +16,12 @@ body {
 
 #player {
 	  position: absolute;
-	  top: 0px;
-	  left: 0px;
+	  top: 200px;
+	  left: 200px;
 	  width: 153.667px;
 	  height: 152px;
     background: url('../assets/images/playerSpriteSheet.png') no-repeat;
+    /* border-style: solid; */
 }
 #player.standing {
   background-position: 0px 0px;
