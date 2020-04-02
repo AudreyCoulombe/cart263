@@ -16,11 +16,11 @@ Used the following link as a reference for the walk pattern: https://digipiph.co
 // Initial states of the game
 let playerMoving = false;
 // Position variables
+let playerPosition; // Note to myself: I can access playerPosition.left and playerPosition.top
 let mousePosition = {
   left:1,
   top: 1
 };
-let playerPosition; // Note to myself: I can access playerPosition.left and playerPosition.top;
 // Variable that contains the walk interval
 let playerWalkInterval;
 // Variable that sets the time of the playerWalkInterval
@@ -29,6 +29,10 @@ let walkingSpeed = 120;
 let walkPattern = ["leftFoot", "standing", "rightFoot", "standing"];
 // Variable that keeps track of the animation frame (used as index number for walkPattern array)
 let currentWalkFrame = 0;
+// Player velocity variables
+let velocityX;
+let velocityY;
+
 
 // When the page is ready...
 $(document).ready(function() {
@@ -42,7 +46,7 @@ $(document).ready(function() {
 //
 // Checks the mouse and player positions and sets the player moving state
 function mousePlayerPosition() {
-  // Check the player position and store it in a variable
+  // Check the player position and store it in a variable (we can access playerPosition.left & playerPosition.top)
   playerPosition = $("#player").offset();
   // console.log("player left: " + playerPosition.left + ", player top: " + playerPosition.top);
   // Check the mouse position: when it moves, get the new position and store it in a variable
@@ -51,11 +55,22 @@ function mousePlayerPosition() {
     mousePosition.top = event.pageY;
   });
   // console.log("mouse left: " + mousePosition.left + ", mouse top: " + mousePosition.top);
-  // If the player has the same position as the mouse...
-  if (playerPosition.left === mousePosition.left && playerPosition.top === mousePosition.top) {
+  // Calculate the X & Y distance between the mouse and the player
+  let distanceX = mousePosition.left - playerPosition.left;
+  let distanceY = mousePosition.top - playerPosition.top;
+  // Use pythagorean theorem to calculate the distance between the mouse and the player
+  let distance = Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY,2));
+  // console.log("distance: " + distance + "distanceX: " + distanceX + "distanceY: " + distanceY);
+  // Set velocity X & Y according to the distance X & Y
+  velocityX = distanceX/10;
+  velocityY = distanceY/10;
+  // console.log("velocityX: " + velocityX + ", velocityY: " + velocityY);
+  // If the distance between player and mouse is less or equal to 10px...
+  if (distance <= 10) {
     // Set the player moving state to false
     playerMoving = false;
-  } else {
+  }
+  else {
     // Else, set the player moving state to true
     playerMoving = true;
   }
@@ -67,6 +82,8 @@ function mousePlayerPosition() {
 function walk() {
   // If the player has to move/is moving...
   if (playerMoving === true) {
+    // Move the player by adding velocity to its top and left position
+    $("#player").offset({ top: playerPosition.top+velocityY, left: playerPosition.left+velocityX });
     // Remove the player's class
     $('#player').removeAttr('class');
     // And add a new class corresponding to the current walk frame
