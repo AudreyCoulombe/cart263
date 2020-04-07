@@ -97,6 +97,7 @@ function moveCharacters() {
     let characterWalkFrame = 0;
     // Create a variable for the character's rotation angle
     let characterRotation;
+
     // Create an interval that sets random velocity X and Y each 2000 milliseconds
     setInterval(function() {
       // Set velocity X and Y to a random number between max and min velocity
@@ -114,8 +115,40 @@ function moveCharacters() {
       }
       // Make the character walk, move and and rotate
       walk($character, characterVelocityX, characterVelocityY, characterRotation, characterWalkFrame);
+      handleWrapping($character);
     },walkingSpeed);
   });
+}
+
+// handleWrapping()
+//
+// Checks if the character has gone off the body and wraps it to the other side if so
+function handleWrapping(wrappingCharacter) {
+  // Variables for body width and height
+  let bodyWidth = $('body').width();
+  let bodyHeight = $('body').height();
+  // Variable for the character's position
+  let $position = wrappingCharacter.offset();
+  // If the character's left position is less than 0...
+  if ($position.left < 0) {
+    // Wrap it to the other side of the body by setting the left position to the body width
+    wrappingCharacter.offset({ left: bodyWidth });
+  }
+  // If the character's left position is greater than the body width...
+  else if ($position.left > bodyWidth) {
+    // Wrap it to the other side of the body by setting the left position to 0
+    wrappingCharacter.offset({ left: 0 });
+  }
+  // If the character's top position is less than 0...
+  if ($position.top < 0) {
+    // Wrap it to the other side of the body by setting the top position to the body height
+    wrappingCharacter.offset({ top: bodyHeight });
+  }
+  // If the character's top position is greater than the body height...
+  else if ($position.top > bodyHeight) {
+    // Wrap it to the other side of the body by setting the top position to 0
+    wrappingCharacter.offset({ top: 0 });
+  }
 }
 
 // mousePlayerPosition()
@@ -173,7 +206,6 @@ function playerWalk() {
     $playerCharacter.css('background-position',walkPattern[1]);
   }
 }
-
 
 // Walk()
 // Animes the character's sprite sheet, moves the character and rotates it.
