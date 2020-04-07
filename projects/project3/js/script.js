@@ -26,7 +26,7 @@ let walkingSpeed = 120;
 // Array that contains the different position of the sprite sheet for the walk animation
 let walkPattern = ["-132px 0px", "0px 0px", "-264px 0px", "0px 0px"];// === ["leftFoot", "standing", "rightFoot", "standing"];
 // Variable that keeps track of the animation frame (used as index number for walkPattern array)
-// let currentWalkFrame = 0;
+let playerWalkFrame = 0;
 // Player velocity variables
 let playerVelocityX;
 let playerVelocityY;
@@ -37,8 +37,6 @@ let numberOfCharacters = 8;
 let characters = [];
 // Variable that contains the player character div
 let $playerCharacter;
-let playerWalkFrame = 0;
-// let characterWalkFrame = 0;
 
 // When the page is ready...
 $(document).ready(function() {
@@ -83,7 +81,7 @@ function displayCharacters() {
 // moveCharacters()
 //
 // For each character, sets a random velocity and changes it each 2 seconds
-// and makes them walk at the walkingSpeed
+// and makes the character walk, move and rotate at the walkingSpeed
 function moveCharacters() {
   // For each character...
   $(".character").each(function() {
@@ -97,6 +95,8 @@ function moveCharacters() {
     let $character = $(this);
     // Set the current walk frame to 0
     let characterWalkFrame = 0;
+    // Create a variable for the character's rotation angle
+    let characterRotation;
     // Create an interval that sets random velocity X and Y each 2000 milliseconds
     setInterval(function() {
       // Set velocity X and Y to a random number between max and min velocity
@@ -112,8 +112,8 @@ function moveCharacters() {
         // Set the current walk frame back to 0
         characterWalkFrame = 0;
       }
-      // Make the character walk and move
-      walk($character, characterVelocityX, characterVelocityY, characterWalkFrame);
+      // Make the character walk, move and and rotate
+      walk($character, characterVelocityX, characterVelocityY, characterRotation, characterWalkFrame);
     },walkingSpeed);
   });
 }
@@ -140,14 +140,6 @@ function mousePlayerPosition() {
   // Set velocity X & Y according to the distance X & Y
   playerVelocityX = distanceX/10;
   playerVelocityY = distanceY/10;
-  // console.log("playerVelocityX: " + playerVelocityX + ", playerVelocityY: " + playerVelocityY);
-  // Set the player rotation angle according the X & Y distance with the mouse (in radians)
-  playerRotation = Math.atan(distanceY/distanceX) + Math.PI/2;// Math.PI/2 radians === 90 degrees
-  // If the distanceX is negative...
-  if(distanceX < 0) {
-    // Add pi randians to the rotation angle (180 degrees)
-    playerRotation += Math.PI;
-  }
   // If the distance between player and mouse is less or equal to 50px...
   if (distance <= 50) {
     // Set the player moving state to false
@@ -156,14 +148,12 @@ function mousePlayerPosition() {
   else {
     // Else, set the player moving state to true
     playerMoving = true;
-    // And rotate the player according to the mouse position
-    $playerCharacter.css({transform: 'rotate('+playerRotation+'rad)'});
   }
 }
 
 // walk()
 //
-// Check if the player is moving and if so make the player walk and move
+// Check if the player is moving and if so make the player walk, move and rotate
 function playerWalk() {
   // If the player has to move/is moving...
   if (playerMoving === true) {
@@ -174,8 +164,8 @@ function playerWalk() {
       // Set the current walk frame back to 0
       playerWalkFrame = 0;
     }
-    // Make the player walk and move
-    walk($playerCharacter, playerVelocityX, playerVelocityY, playerWalkFrame);
+    // Make the player walk, move and rotate
+    walk($playerCharacter, playerVelocityX, playerVelocityY, playerRotation, playerWalkFrame);
   }
   // Else, if the player is not moving...
   else {
@@ -186,13 +176,22 @@ function playerWalk() {
 
 
 // Walk()
-// Animes the character and moves it.
+// Animes the character's sprite sheet, moves the character and rotates it.
 // Function used for the player and the other characters
-function walk($walkingCharacter, velocityX, velocityY, currentWalkFrame) {
+function walk($walkingCharacter, velocityX, velocityY, rotationAngle, currentWalkFrame) {
   // Get the character position and store it un a variable
   let position = $walkingCharacter.offset();
   // Move the character by adding velocity to its top and left position
   $walkingCharacter.offset({ top: position.top + velocityY, left: position.left + velocityX });
-  // Change the character's background position according to the current walk frame
+  // Animates the character's background position according to the current walk frame
   $walkingCharacter.css('background-position',walkPattern[currentWalkFrame]);
+  // Set the character rotation angle according ti the X & Y velocity (in radians)
+  rotationAngle = Math.atan(velocityY/velocityX) + Math.PI/2;// Math.PI/2 radians === 90 degrees
+  // If the distanceX is negative...
+  if(velocityX < 0) {
+    // Add pi randians to the rotation angle (180 degrees)
+    rotationAngle += Math.PI;
+  }
+  // And rotate the character according to the rotation angle
+  $walkingCharacter.css({transform: 'rotate('+rotationAngle+'rad)'});
 }
