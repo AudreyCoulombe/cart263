@@ -18,17 +18,29 @@ body {
 	  position: absolute;
 	  top: 200px;
 	  left: 200px;
-	  width: 153.667px;
-	  height: 152px;
-    background: url('../assets/images/playerSpriteSheet.png') no-repeat;
+	  width: 132px;
+	  height: 131px;
+    background: url('../assets/images/characters-08.png') no-repeat;
+    background-position: 0px 0px;
     /* border-style: solid; */
 }
-#player.standing {
+/* #player.standing {
   background-position: 0px 0px;
 }
 #player.leftFoot {
-  background-position: -153.667px 0px;
+  background-position: -132px 0px;
 }
 #player.rightFoot {
-  background-position: -307.333px 0px;
+  background-position: -264px 0px;
+} */
+
+.character {
+	  position: absolute;
+	  top: 200px;
+	  left: 200px;
+	  width: 132px;
+	  height: 131px;
+    /* background: url('../assets/images/characters-08.png') no-repeat; */
+    border-style: solid;
+    background-position: 0px 0px;
 }
