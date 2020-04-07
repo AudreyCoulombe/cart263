@@ -37,6 +37,8 @@ let numberOfCharacters = 8;
 let characters = [];
 // Variable that contains the player character div
 let $playerCharacter;
+let playerCollision = false;
+let characterCollision;
 
 // When the page is ready...
 $(document).ready(function() {
@@ -46,11 +48,38 @@ $(document).ready(function() {
   displayCharacters();
   // Check the mouse and player positions each millisecond
   setInterval(mousePlayerPosition,1);
-
+  // M
   moveCharacters();
   // And check if it's time to walk and if so, anime the walk pattern
   setInterval(playerWalk, walkingSpeed);
+  setInterval(checkPlayerCollision,60);
 });
+
+// checkPlayerCollision()
+//
+// Uses .collision() function (from jquery-collision extension) to check if the player touches a character.
+// If so, animes the player with the "explode" effect...
+function checkPlayerCollision() {
+  // When the player touches a character, store the character object in an "array", in a variable
+  characterCollision = $($playerCharacter).collision('.character'); // function from the library extension "jquery-collision"
+  // console.log(characterCollision);
+  // If the characterCollision "array" contain more than 0 object...
+  if (characterCollision.length > 0) {
+    // Set the player collision state to true;
+    playerCollision = true;
+    // Anime the player with the "explode" effect and when the animation is done...
+    $playerCharacter.effect( "explode", "linear", 400, function() {
+      // Set the player collision state to false
+      playerCollision = false;
+      // Stop the animation effect
+      $playerCharacter.stop(true, true);
+      // Show the player character
+      $playerCharacter.show();
+    } );
+  }
+  // console.log(playerCollision);
+  // console.log(characterCollision.length);
+}
 
 // displayCharacters()
 //
