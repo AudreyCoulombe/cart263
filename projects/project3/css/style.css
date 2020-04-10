@@ -26,15 +26,6 @@ body {
     background-position: 0px 0px;
     border-style: solid;
 }
-/* #player.standing {
-  background-position: 0px 0px;
-}
-#player.leftFoot {
-  background-position: -132px 0px;
-}
-#player.rightFoot {
-  background-position: -264px 0px;
-} */
 
 .character {
 	  position: absolute;
@@ -45,4 +36,13 @@ body {
     /* background: url('../assets/images/characters-08.png') no-repeat; */
     border-style: solid;
     background-position: 0px 0px;
+}
+
+.paperRoll {
+  position: absolute;
+  width: 59px;
+  height: 78px;
+  background: url('../assets/images/toiletPaperRoll.png') no-repeat;
+  background-position: 0px 0px;
+  border-style: solid;
 }
