@@ -9,11 +9,13 @@ so the canvas is flush with the top left corner.
 body {
   padding: 0;
   margin: 0;
-  width: 2000px;
-  height: 2000px;
+  width: 1400px;
+  /* width: 700px; */
+  height: 800px;
   background-color: yellow;
-
-  border-style: solid;
+  background-size: 800px 1400px;
+  background: url('../assets/images/ground-10.png') no-repeat;
+  /* border-style: solid; */
 }
 
 #player {
@@ -24,10 +26,13 @@ body {
 	  height: 131px;
     background: url('../assets/images/characters-08.png') no-repeat;
     background-position: 0px 0px;
-    border-style: solid;
+    /* border-style: solid; */
 }
 
 .character {
+  display: block;
+    padding: 0px 0px;
+    margin: 0px 0px;
 	  position: absolute;
 	  top: 200px;
 	  left: 200px;
@@ -44,5 +49,5 @@ body {
   height: 78px;
   background: url('../assets/images/toiletPaperRoll.png') no-repeat;
   background-position: 0px 0px;
-  border-style: solid;
+  /* border-style: solid; */
 }

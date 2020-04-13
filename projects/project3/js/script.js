@@ -15,7 +15,6 @@ Used the following link as a reference for the walk pattern: https://digipiph.co
 //
 // Initial states of the game
 let playerMoving = false;
-let playerCollision = false;
 // Position variables
 let playerPosition; // Note to myself: I can access playerPosition.left and playerPosition.top
 let mousePosition = {
@@ -32,12 +31,13 @@ let playerWalkFrame = 0;
 let playerVelocityX;
 let playerVelocityY;
 // Number of characters other than the player and number of toilet paper rolls
-let numberOfCharacters = 8;
+let numberOfCharacters = 6;
+// let numberOfCharacters = 8;
 let numberOfPaperRoll = 8;
 // Variable that contains the player character div
 let $playerCharacter;
-// Variable in which we will store like in an array the elements touched by the player
-let playerTouched;
+// Variable with the initial score
+let score = 0;
 
 // When the page is ready...
 $(document).ready(function() {
@@ -63,27 +63,35 @@ $(document).ready(function() {
 // If so, animes the player with the "explode" effect...
 function checkPlayerCollision() {
   // When the player touches a character, store the character object in an "array", in a variable
-  playerTouched = $($playerCharacter).collision('.character'); // function from the library extension "jquery-collision"
-  // If the playerTouched "array" contain more than 0 object...
-  if (playerTouched.length > 0) {
-    // Set the player collision state to true;
-    playerCollision = true;
-    // Anime the player with the "explode" effect and when the animation is done...
-    $playerCharacter.effect( "explode", "linear", 400, function() {
-      // Set the player collision state to false
-      playerCollision = false;
-      // Stop the animation effect
-      $playerCharacter.stop(true, true);
-      // Show the player character
-      $playerCharacter.show();
-    } );
+  let touchedCharacter = $($playerCharacter).collision('.character'); // function from the library extension "jquery-collision"
+  // When the player touches a paper roll, store the paper roll object in an "array", in a variable
+  let touchedPaperRoll = $($playerCharacter).collision('.paperRoll');
+  // If the "array" with the touched character contains more than 0 object...
+  if (touchedCharacter.length > 0) {
+      // Anime the player with the "explode" effect and when the animation is done...
+      $playerCharacter.effect( "explode", "linear", 400, function() {
+        // Stop the animation effect
+        $playerCharacter.stop(true, true);
+        // Show the player character
+        $playerCharacter.show();
+      } );
+  }
+  // If the "array" with the touched toilet paper rolls contains more than 0 object...
+  if (touchedPaperRoll.length > 0) {
+    // Add 1 to the score
+    score += 1;
+    // And change its position and roatation angle to a random one
+    displayElement($(touchedPaperRoll[0]));
+    // Display the new score
+    $('#score').html(score);
   }
 }
 
 // displayCharacters()
 //
-// For each character, creates a new div, displays it randomly, adds the class "character"
-// and sets the background image as the character image
+// For each character, creates a new div, displays it randomly, adds the class "character",
+// sets the background image as the character image and checks if it overlays another character.
+// If so, displays that character randomly again until it overlays no other character
 function displayCharacters() {
   // For each character...
   for (let i = 1; i<numberOfCharacters+1; i++) {
@@ -95,6 +103,33 @@ function displayCharacters() {
     $characterDiv.addClass("character");
     // Set the background image to the character number we are at
     $characterDiv.css('background-image', 'url(../assets/images/characters-0'+i+'.png)');
+  }
+  // Once all the characters are set, for each one...
+  $('.character').each(function() {
+    // Store the actual character in a variable
+    let $character = $(this);
+    // Store characters other than the actual one in a variable
+    let $otherCharacters = $('.character').not($character);
+    // Check if the actual character overlays the other ones and if so, display it randomly until it overlays no other character
+    checkOverlay($character, $otherCharacters);
+  });
+}
+
+// checkOverlay()
+//
+// Checks if the actual character overlays another one.
+// If so, displays it randomly and calls checkOverlay() function again.
+function checkOverlay($actualCharacter, $others) {
+  // When the character touches another one, store the other character object in an "array"
+  let characterCollision = $($actualCharacter).collision($others);
+  // If the characterCollision "array" contains more than zero object...
+  if (characterCollision.length > 0) {
+    // Display the actual character with a random position and rotation angle
+    displayElement($actualCharacter);
+    // After 100 millisecons, check again if the actual character overlays another one
+    setTimeout(function() {
+      checkOverlay($actualCharacter, $others);
+    }, 100);
   }
 }
 
@@ -117,7 +152,7 @@ function displayPaperRolls() {
 // Gets a random number for the position and rotation angle and displays elements randomly in the body
 // Function used to display the characters other than the player and for toilet paper rolls
 function displayElement($newDiv) {
-  // Get a random number between 0 and de width of the body for the left position
+  // Get a random number between 0 and the width of the body for the left position
   let leftPosition = Math.random() * $('body').width();
   // Get a random number between 0 and de height of the body for the top position
   let topPosition = Math.random() * $('body').height();
@@ -132,29 +167,38 @@ function displayElement($newDiv) {
 
 // moveCharacters()
 //
-// For each character, sets a random velocity and changes it each 2 seconds
+// For each character, sets a random velocity and changes it each 2 seconds.
+// Makes the character go to the opposite direction when it touches another one
 // and makes the character walk, move and rotate at the walkingSpeed
 function moveCharacters() {
   // For each character...
-  $(".character").each(function() {
+  $(".character").each(function(index) {
     // Set the maximum and minimum velocity
-    let maxVelocity = 30;
-    let minVelocity = -30;
+    let maxVelocity = 20;
+    let minVelocity = -20;
     // Create variables for the character velocity X and Y
     let characterVelocityX;
     let characterVelocityY;
     // Create a variable for the actual character
     let $character = $(this);
+    // Create a virable for the characters other than the actual one
+    let $otherCharacters = $('.character').not($character);
     // Set the current walk frame to 0
     let characterWalkFrame = 0;
     // Create a variable for the character's rotation angle
     let characterRotation;
+    // Set the running away state to false
+    let runningAway = false;
 
     // Create an interval that sets random velocity X and Y each 2000 milliseconds
+    // if the character is not running away
     setInterval(function() {
-      // Set velocity X and Y to a random number between max and min velocity
-      characterVelocityX = Math.random() * (maxVelocity - minVelocity) + minVelocity;
-      characterVelocityY = Math.random() * (maxVelocity - minVelocity) + minVelocity;
+      // If the character is not running away form another character...
+      if (runningAway === false) {
+        // Set velocity X and Y to a random number between max and min velocity
+        characterVelocityX = Math.random() * (maxVelocity - minVelocity) + minVelocity;
+        characterVelocityY = Math.random() * (maxVelocity - minVelocity) + minVelocity;
+      }
     }, 2000);
     // Create an interval that makes the character walk and move at the walkingSpeed
     setInterval(function() {
@@ -165,8 +209,26 @@ function moveCharacters() {
         // Set the current walk frame back to 0
         characterWalkFrame = 0;
       }
+      // If the character is not running away from another character
+      if (runningAway === false) {
+        // When the character touches another character, store the other character object in an "array", in a variable
+        let characterCollision = $($character).collision($otherCharacters);
+        // If the "array" with the touched character contains more than 0 object...
+        if (characterCollision.length > 0) {
+          // Set the running away state to true
+          runningAway = true;
+          // Make the player go to the opposite direction by multiplying its velocity by -1
+          characterVelocityX *= -1;
+          characterVelocityY *= -1;
+          // After 100 * index miliseconds, set the running away state back to false
+          setTimeout(function() {
+            runningAway = false;
+          },index*500); //(had to use the index in the delay or else the 2 characters would sometimes be stuck in a loop walking together and change velocity at the same time)
+        }
+      }
       // Make the character walk, move and and rotate
       walk($character, characterVelocityX, characterVelocityY, characterWalkFrame);
+      // When the character goes out the body, make it wrap
       handleWrapping($character);
     },walkingSpeed);
   });
