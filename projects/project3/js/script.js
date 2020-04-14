@@ -36,13 +36,26 @@ let numberOfCharacters = 6;
 let numberOfPaperRoll = 8;
 // Variable that contains the player character div
 let $playerCharacter;
-// Variable with the initial score
+// Variable with the initial score (number of paper rolls collected)
 let score = 0;
+// Variable with the number of times the player touched another character (for the progressbar)
+let contactWithVirus = 0;
+// Variable that contains the interval that updates the progressbar
+let progressbarInterval;
+// Image that will be appended to the dialog box
+let $virusImage;
 
-// When the page is ready...
-$(document).ready(function() {
+// When the page is ready, run the documentReady() function
+$(document).ready(documentReady);
+
+// documentReady()
+//
+//
+function documentReady() {
   // Assign the player character variable to the div with the id "player"
   $playerCharacter = $('#player');
+  // Display and update the progressbar each 60 milliseconds and store the interval in a variable
+  progressbarInterval = setInterval(displayProgressbar, 60);
   // Display the characters other than the player randomly in the body
   displayCharacters();
   // Display the toilet paper rolls randomly in the body
@@ -54,8 +67,130 @@ $(document).ready(function() {
   // Check if it's time to walk and if so, anime the walk pattern
   setInterval(playerWalk, walkingSpeed);
   // Check if the player touched something each 60 millisecond
-  setInterval(checkPlayerCollision,60);
-});
+  setInterval(checkPlayerCollision,120);
+}
+
+// displayProgressbar()
+//
+// Displays and updates the progressbar according to the number of times the player touched another character. (The progressbar represent the level of "infection", once it is complete the player is "infected" and the game is over)
+// Runs the playerDead() function when the progressbar is complete
+function displayProgressbar() {
+  // Display the div with the id "progressbar" as a progressbar...
+  $( "#progressbar" ).progressbar({
+    // With a completion level (in %) according to the number of times the player touched another character
+    value: contactWithVirus,
+    // When the value is 100%, run the function playeDead()
+    complete: playerDead,
+  });
+}
+
+// playerDead()
+//
+// 
+function playerDead() {
+  // Stop and remove the interval that updates the progressbar
+  clearInterval(progressbarInterval);
+  // Remove all the characters and the paper rolls
+  $('.character').remove();
+  $('.paperRoll').remove();
+  // Hide the player
+  $('#player').hide();
+  // Open a dialog box saying the player is infected
+  playerInfectedDialog();
+}
+
+// playerInfectedDialog()
+//
+// Runs when player is dead.
+// Adds a virus image and text to the dialog. Displays the dialog box with specified options.
+function playerInfectedDialog() {
+  // Add text to the div with id "gameoverDialog"
+  $('#gameoverDialog').html("You have been infected by the virus");
+  // Set the variable to an image tag with the path of the virus image
+  $virusImage = $('<img src="assets/images/virus.png">');
+  // Add the image to the div with the id "gameoverDialog"
+  $virusImage.appendTo($('#gameoverDialog'));
+  // Set the div with the id "gameoverDialog" as a dialog box and display it
+  $('#gameoverDialog').dialog({
+    modal: true, // Blur the background
+    resizable: false, // Disable resizable option
+    draggable: false, // Disable draggable option
+    dialogClass: "dialogStyle", // Add a class
+    height: 580, // Set dimensions
+    width: 800,
+    buttons: [{
+      text: "Next",
+      // When we click the button, run the goHomeDialog() function
+      click: goHomeDialog,
+    }],
+  });
+}
+
+// goHomeDialog
+//
+// Runs when the "Next" button is clicked.
+// Removes the virus image from the gameover dialog, changes text and some options of the dialog and displays the new dialog telling the player to go home
+function goHomeDialog() {
+  // Remove the virus image
+  $($virusImage).remove();
+  // Change the text in the div with the id "gameoverDialog"
+  $('#gameoverDialog').html("Now go home and stay isolated from the rest of the world");
+  // Display the dialog box with the new options
+  $('#gameoverDialog').dialog({
+    height: 350, // Set dimensions
+    width: 600,
+    buttons: [{
+      text: "Go home",
+      // When we click the button, run the atLeastDialog() function
+      click: atLeastDialog
+    }],
+  });
+}
+
+// atLeastDialog()
+//
+// Runs when the "Go home" button is clicked.
+// Hides the progressbar and the sore and changes the background image of the body
+// Changes text and some options of the gameover dialog and displays the new dialog telling the player how many paper rolls he collected.
+// After 2 seconds, displays a thousand paper rolls in the body
+function atLeastDialog() {
+  // Hide the progressbar and the score
+  $('#progressbar').hide();
+  $('#scoreBox').hide();
+  // Change the background image of the body to an image of the player at home
+  $('body').css('background-image', 'url(../assets/images/playerHome.png)');
+  // Change the text in the div with the id "gameoverDialog"
+  $('#gameoverDialog').html("What a shitty situation! At least you collected " + score + " rolls of toilet paper!");
+  // Display the dialog box with the new options
+  $('#gameoverDialog').dialog({
+    position: { my: "right center", at: "right center", of: "body" }, // Set position
+    height: 400, // Set dimensions
+    width: 500,
+    buttons: [{
+      id: "newGameButton", // Add an id that's set to hide the button
+      text: "New game",
+      // When we click the button, run the documentReady() function
+      click: documentReady
+    }],
+  });
+  // After a delay of 2 seconds (2000 milliseconds)...
+  setTimeout(function(){
+    // Show the button by changing the display mode with css
+    $('#newGameButton').css('display', 'block');
+    // And execute the following steps a thousand times
+    for (let i = 0; i<1000; i++) {
+      // After a delay related to the number of times we ran the loop...
+      setTimeout(function(){
+        // Create a new div and store it in a variable
+        let $paperRollDiv = $("<div></div>");
+        // Add the class "paperRoll" to the new div
+        $paperRollDiv.addClass("paperRoll");
+        // Set a random position and rotation angle for the new div and display it in the body
+        displayElement($paperRollDiv);
+      },i*20); // Used "i" for the delay so the paper rolls are displayed one after the other
+    }
+  },2000);
+}
 
 // checkPlayerCollision()
 //
@@ -74,6 +209,7 @@ function checkPlayerCollision() {
         $playerCharacter.stop(true, true);
         // Show the player character
         $playerCharacter.show();
+        contactWithVirus += 20;
       } );
   }
   // If the "array" with the touched toilet paper rolls contains more than 0 object...
@@ -172,7 +308,7 @@ function displayElement($newDiv) {
 // and makes the character walk, move and rotate at the walkingSpeed
 function moveCharacters() {
   // For each character...
-  $(".character").each(function(index) {
+  $('.character').each(function(index) {
     // Set the maximum and minimum velocity
     let maxVelocity = 20;
     let minVelocity = -20;
