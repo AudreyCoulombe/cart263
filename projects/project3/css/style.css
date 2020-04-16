@@ -14,15 +14,16 @@ body {
   height: 800px;
   background-color: yellow;
   background-size: 800px 1400px;
-  background: url('../assets/images/ground-10.png') no-repeat;
+  background: no-repeat;
   font-family: Arial, Helvetica, sans-serif;
+  /* overflow: hidden; */
   /* border-style: solid; */
 }
 
 #progressbar {
   position: fixed;
   height: 10px;
-  width:98%;
+  width:96%;
   top: 15px;
   left: 10px;
   margin-right: auto;
@@ -88,7 +89,7 @@ body {
 	  left: 200px;
 	  width: 132px;
 	  height: 131px;
-    border-style: solid;
+    /* border-style: solid; */
     background-position: 0px 0px;
 }
 

@@ -36,14 +36,17 @@ let numberOfCharacters = 6;
 let numberOfPaperRoll = 8;
 // Variable that contains the player character div
 let $playerCharacter;
-// Variable with the initial score (number of paper rolls collected)
-let score = 0;
+// Variable with the score (number of paper rolls collected)
+let score;
 // Variable with the number of times the player touched another character (for the progressbar)
-let contactWithVirus = 0;
+let contactWithVirus;
 // Variable that contains the interval that updates the progressbar
 let progressbarInterval;
-// Image that will be appended to the dialog box
+// Images that will be appended to the dialog box
 let $virusImage;
+let $pooImage;
+// Variable with the number of paper rolls that are displayed when the game is done
+let finalPaperRolls = 1000;
 
 // When the page is ready, run the documentReady() function
 $(document).ready(documentReady);
@@ -52,8 +55,24 @@ $(document).ready(documentReady);
 //
 //
 function documentReady() {
+  // Set the number of contact with virus and the initial score to 0
+  contactWithVirus = 0;
+  score = 0;
+  // Display the initial score in the paragraph with the id "score"
+  $('#score').html(score);
+  // Show the score and the progressbar (hidden when the player is infected)
+  $('#scoreBox').show();
+  $('#progressbar').show();
   // Assign the player character variable to the div with the id "player"
   $playerCharacter = $('#player');
+  // Show the player on screen
+  $playerCharacter.show();
+  // Change the background image of the body to an image of the gound
+  $('body').css('background-image', 'url(../assets/images/ground.png)');
+  // Hide the dialog box (shown when the player is infected/dead)
+  $('#gameoverDialog').hide();
+  // Hide the paper rolls that are displayed when the player is infected
+  $('.paperRoll').remove();
   // Display and update the progressbar each 60 milliseconds and store the interval in a variable
   progressbarInterval = setInterval(displayProgressbar, 60);
   // Display the characters other than the player randomly in the body
@@ -86,7 +105,8 @@ function displayProgressbar() {
 
 // playerDead()
 //
-// 
+// When the player is infected, clear the interval that updates the progressbar,
+// remove the characters, paper rolls, hide the player and display a dialog box
 function playerDead() {
   // Stop and remove the interval that updates the progressbar
   clearInterval(progressbarInterval);
@@ -139,7 +159,9 @@ function goHomeDialog() {
   $('#gameoverDialog').dialog({
     height: 350, // Set dimensions
     width: 600,
+    // Create a button with the home icon and specified text on it
     buttons: [{
+      icon: "ui-icon-home",
       text: "Go home",
       // When we click the button, run the atLeastDialog() function
       click: atLeastDialog
@@ -161,24 +183,32 @@ function atLeastDialog() {
   $('body').css('background-image', 'url(../assets/images/playerHome.png)');
   // Change the text in the div with the id "gameoverDialog"
   $('#gameoverDialog').html("What a shitty situation! At least you collected " + score + " rolls of toilet paper!");
+  // Set the variable to an image tag with the path of the pile of poo image
+  $pooImage = $('<img src="assets/images/pileOfPoo.png">');
+  // Add the image to the div with the id "gameoverDialog"
+  $pooImage.appendTo($('#gameoverDialog'));
   // Display the dialog box with the new options
   $('#gameoverDialog').dialog({
+    modal: false, // Don't blur the background
     position: { my: "right center", at: "right center", of: "body" }, // Set position
-    height: 400, // Set dimensions
+    height: 600, // Set dimensions
     width: 500,
     buttons: [{
       id: "newGameButton", // Add an id that's set to hide the button
       text: "New game",
-      // When we click the button, run the documentReady() function
-      click: documentReady
+      // When we click the button...
+      click: function() {
+        // Destroy this dialog
+        $('#gameoverDialog').dialog("destroy");
+        // And run the documentReady() function
+        documentReady();
+      }
     }],
   });
   // After a delay of 2 seconds (2000 milliseconds)...
   setTimeout(function(){
-    // Show the button by changing the display mode with css
-    $('#newGameButton').css('display', 'block');
-    // And execute the following steps a thousand times
-    for (let i = 0; i<1000; i++) {
+    // Execute the following steps a thousand times
+    for (let i = 0; i<finalPaperRolls; i++) {
       // After a delay related to the number of times we ran the loop...
       setTimeout(function(){
         // Create a new div and store it in a variable
@@ -187,7 +217,12 @@ function atLeastDialog() {
         $paperRollDiv.addClass("paperRoll");
         // Set a random position and rotation angle for the new div and display it in the body
         displayElement($paperRollDiv);
-      },i*20); // Used "i" for the delay so the paper rolls are displayed one after the other
+        // If we are displaying the last paper roll of the loop...
+        if (i===finalPaperRolls-1){
+          // Show the "new game" button by changing its display mode with css
+          $('#newGameButton').css('display', 'block');
+        }
+      },i); // Used "i" for the delay so the paper rolls are displayed one after the other
     }
   },2000);
 }
