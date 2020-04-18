@@ -10,14 +10,15 @@ body {
   padding: 0;
   margin: 0;
   width: 1400px;
-  /* width: 700px; */
+  /* width: 400px; */
   height: 800px;
+  /* height: 400px; */
   background-color: yellow;
   background-size: 800px 1400px;
   background: no-repeat;
   font-family: Arial, Helvetica, sans-serif;
-  /* overflow: hidden; */
   /* border-style: solid; */
+  z-index: -1;
 }
 
 #progressbar {
@@ -26,7 +27,7 @@ body {
   width:96%;
   top: 15px;
   left: 10px;
-  margin-right: auto;
+  margin: 0px 0px;
 }
 
 .ui-progressbar .ui-progressbar-value {
@@ -45,6 +46,7 @@ body {
   width: 90px;
   align-items: center;
   text-align: center;
+  margin: 0px 0px;
 }
 
 #score {
@@ -52,15 +54,69 @@ body {
   margin: 0px 0px;
 }
 
+#playerPerimeter {
+  position:relative;
+  width: 132px;
+  height: 132px;
+  border-style: solid;
+  color: red;
+}
+#perimeter {
+  width: auto;
+  height: auto;
+  position:absolute;
+  /* color:yellow; */
+  /* border-style: solid; */
+  /* left:50%; */
+  /* top:50%; */
+  width:400px;
+  height:400px;
+  z-index: -1;
+}
 #player {
 	  position: absolute;
-	  top: 200px;
-	  left: 200px;
 	  width: 132px;
-	  height: 131px;
-    background: url('../assets/images/characters-08.png') no-repeat;
+	  height: 132px;
+    background: url('../assets/images/characters-01.png') no-repeat;
     background-position: 0px 0px;
     /* border-style: solid; */
+    transform: rotate(15deg);
+}
+.characterPerimeter {
+  position:absolute;
+  display: block;
+    padding: 0px 0px;
+    margin: 0px 0px;
+	  width: 132px;
+	  height: 132px;
+    border-style: solid;
+}
+.character {
+  display: block;
+  position: absolute;
+    padding: 0px 0px;
+    margin: 0px 0px;
+	  width: 132px;
+	  height: 132px;
+    /* border-style: solid; */
+    background-position: 0px 0px;
+    transform-origin: 50% 50%;
+}
+
+.paperRollPerimeter {
+  position: absolute;
+  width: 59px;
+  height: 78px;
+  /* border-style: solid; */
+}
+
+.paperRoll {
+  position: absolute;
+  width: 59px;
+  height: 78px;
+  background: url('../assets/images/toiletPaperRoll.png') no-repeat;
+  background-position: 0px 0px;
+  /* border-style: solid; */
 }
 
 /* Dialog box: */
@@ -79,28 +135,6 @@ body {
       background-color: black;
       height: 40px;
     }
-
-.character {
-  display: block;
-    padding: 0px 0px;
-    margin: 0px 0px;
-	  position: absolute;
-	  top: 200px;
-	  left: 200px;
-	  width: 132px;
-	  height: 131px;
-    /* border-style: solid; */
-    background-position: 0px 0px;
-}
-
-.paperRoll {
-  position: absolute;
-  width: 59px;
-  height: 78px;
-  background: url('../assets/images/toiletPaperRoll.png') no-repeat;
-  background-position: 0px 0px;
-  /* border-style: solid; */
-}
 
 #newGameButton {
   display:none;
