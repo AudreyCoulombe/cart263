@@ -18,15 +18,15 @@ let playerMoving = false;
 // Position variables
 let playerPosition; // Note to myself: I can access playerPosition.left and playerPosition.top
 let mousePosition = {
-  left:1,
+  left: 1,
   top: 1
 };
 // Variable that sets the time of the playerWalkInterval
 let walkingSpeed = 120;
 // Array that contains the different position of the sprite sheet for the walk animation
-let walkPattern = ["-132px 0px", "0px 0px", "-264px 0px", "0px 0px"];// === ["leftFoot", "standing", "rightFoot", "standing"];
+let walkPattern = ["-132px 0px", "0px 0px", "-264px 0px", "0px 0px"]; // === ["leftFoot", "standing", "rightFoot", "standing"];
 // Variable that keeps track of the animation frame (used as index number for walkPattern array)
-let playerWalkFrame = 0;
+let playerWalkFrame;
 // Player velocity variables
 let playerVelocityX;
 let playerVelocityY;
@@ -61,9 +61,8 @@ function documentReady() {
   // Set the number of contact with virus and the initial score to 0
   contactWithVirus = 0;
   score = 0;
-  // Set the player velocity to 0
-  playerVelocityX = 0;
-  playerVelocityY = 0;
+  // Make the player standing by setting its walk frame to 1
+  playerWalkFrame = 1;
   // Display the initial score in the paragraph with the id "score"
   $('#score').html(score);
   // Show the score and the progressbar (hidden when the player is infected)
@@ -71,19 +70,21 @@ function documentReady() {
   $('#progressbar').show();
   // Assign the player character variable to the div with the id "playerPerimeter"
   $playerCharacter = $('#playerPerimeter');
-  // Place the player in the center of the body
+  // Place the player in the center of the body and show it
   $playerCharacter.css({
     "top": "50%",
     "left": "50%",
-  });
-  // Place the perimeter circles at the center of the player
-  $('#perimeter').position({
-    my: "center center",
-    at: "center center",
-    of: "#playerPerimeter"
-  });
-  // Show the player and its perimeter circles on screen
-  $playerCharacter.show();
+  }).show();
+  // Each 1 millisecond...
+  setInterval(function() {
+    // Place the perimeter circles at the center of the player
+    $('#perimeter').position({
+      my: "center center",
+      at: "center center",
+      of: $playerCharacter
+    });
+  }, 1);
+  // Show the perimeter circles on screen
   $('#perimeter').show();
   // Change the background image of the body to an image of the gound
   $('body').css('background-image', 'url(../assets/images/ground.png)');
@@ -100,13 +101,13 @@ function documentReady() {
   // Move all charcters other than the player and change the velocity each 2 seconds
   moveCharacters();
   // After a delay of 2 seconds (2000 milliseconds)...
-  setTimeout(function(){
+  setTimeout(function() {
     // Check if the player touched something each 120 milliseconds
-    collisionInterval = setInterval(checkPlayerCollision,walkingSpeed);
+    collisionInterval = setInterval(checkPlayerCollision, walkingSpeed);
     // Check if it's time to walk and if so, anime the walk pattern
-    playerWalkInterval = setInterval(playerWalk, walkingSpeed);
+    playerWalkInterval = setInterval(movePlayer, walkingSpeed);
     // Check the mouse and player positions each millisecond
-    mousePlayerInterval = setInterval(mousePlayerPosition,1);
+    mousePlayerInterval = setInterval(mousePlayerPosition, 1);
   }, 2000);
 }
 
@@ -117,30 +118,30 @@ function documentReady() {
 // Displays ellipses of different sizes and colors that represent the perimeter around the player
 function setup() {
   // Create the canvas and store it in a variable
-  let canvas = createCanvas(400,400);
+  let canvas = createCanvas(400, 400);
   // Make the div with the id "perimeter" the parent of the canvas
   canvas.parent('perimeter');
   // Set the stroke and filling parameters for the ellipses
   noFill();
   strokeWeight(2);
-  stroke(255,0,0);
+  stroke(255, 0, 0);
   // Display 3 red ellipses of different sizes from the center of the cavas
-  ellipse(height/2, width/2, 100,100);
-  ellipse(height/2, width/2, 150,150);
-  ellipse(height/2, width/2, 200,200);
+  ellipse(height / 2, width / 2, 100, 100);
+  ellipse(height / 2, width / 2, 150, 150);
+  ellipse(height / 2, width / 2, 200, 200);
   // Set the new stroke parameters
   strokeWeight(1);
-  stroke(255,140,0);
+  stroke(255, 140, 0);
   // Display an orange ellipse from the center of the canvas
-  ellipse(height/2, width/2, 250,250);
+  ellipse(height / 2, width / 2, 250, 250);
   // Set the new stroke color
-  stroke(255,255,0);
+  stroke(255, 255, 0);
   // Display a yellow ellipse from the center of the canvas
-  ellipse(height/2, width/2, 300,300);
+  ellipse(height / 2, width / 2, 300, 300);
   // Set the new stroke color
-  stroke(0,255,0);
+  stroke(0, 255, 0);
   // Display a green ellipse from the center of the canvas
-  ellipse(height/2, width/2, 350,350);
+  ellipse(height / 2, width / 2, 350, 350);
 }
 
 // displayProgressbar()
@@ -149,11 +150,326 @@ function setup() {
 // Runs the playerDead() function when the progressbar is complete
 function displayProgressbar() {
   // Display the div with the id "progressbar" as a progressbar...
-  $( "#progressbar" ).progressbar({
+  $("#progressbar").progressbar({
     // With a completion level (in %) according to the number of times the player touched another character
     value: contactWithVirus,
     // When the value is 100%, run the function playeDead()
     complete: playerDead,
+  });
+}
+
+// checkPlayerCollision()
+//
+// Uses .collision() function (from jquery-collision extension) to check if the player touches a character.
+// If so, animes the player with the "explode" effect...
+function checkPlayerCollision() {
+  // When the player touches a character, store the character object in an "array", in a variable
+  let touchedCharacter = $($playerCharacter).collision('.characterPerimeter'); // function from the library extension "jquery-collision"
+  // When the player touches a paper roll, store the paper roll object in an "array", in a variable
+  let touchedPaperRoll = $($playerCharacter).collision('.paperRollPerimeter');
+  // If the "array" with the touched character contains more than 0 object...
+  if (touchedCharacter.length > 0) {
+    // Anime the player with the "explode" effect and when the animation is done...
+    $playerCharacter.effect("explode", "linear", 400, function() {
+      // Stop the animation effect
+      $playerCharacter.stop(true, true);
+      // Show the player character
+      $playerCharacter.show();
+      contactWithVirus += 20;
+    });
+  }
+  // If the "array" with the touched toilet paper rolls contains more than 0 object...
+  if (touchedPaperRoll.length > 0) {
+    // Add 1 to the score
+    score += 1;
+    // And change its position and roatation angle to a random one
+    displayElement($(touchedPaperRoll[0]));
+    // Display the new score
+    $('#score').html(score);
+  }
+}
+
+// displayCharacters()
+//
+// For each character, creates a new div, displays it randomly, adds the class "character",
+// sets the background image as the character image and checks if it overlays another character.
+// If so, displays that character randomly again until it overlays no other character
+function displayCharacters() {
+  // For each character...
+  for (let i = 1; i < numberOfCharacters + 1; i++) {
+    // Create a new div that contains the character and store it in a variable
+    let $characterPerimeter = $("<div></div>");
+    // Create a new div with the character image and store it in a variable
+    let $characterImg = $("<div></div>");
+    // Add the class "characterPerimeter" to the div that contains the character
+    $characterPerimeter.addClass("characterPerimeter");
+    // Add the class "character" to the div with the character image and append it to the div that contains the character (had issues to get accurate distance with rotated div, so $characterImg rotates and $characterPerimeter is used to check collision)
+    $characterImg.addClass("character").appendTo($characterPerimeter);
+    // Set a random position and rotation angle for the div that contains the character and display it in the body
+    displayElement($characterPerimeter);
+    // Set the background image to the character number we are at
+    $characterImg.css('background-image', 'url(../assets/images/characters-0' + i + '.png)');
+  }
+  // Once all the characters are set, for each one...
+  $('.characterPerimeter').each(function() {
+    // Store the actual character in a variable
+    let $character = $(this);
+    // Store characters other than the actual one in a variable
+    let $otherCharacters = $('.characterPerimeter').not($character);
+    // Check if the actual character overlays the other ones and if so, display it randomly until it overlays no other character
+    checkOverlay($character, $otherCharacters);
+  });
+}
+
+// checkOverlay()
+//
+// Checks if the actual character overlays another one or the player.
+// If so, displays it randomly and calls checkOverlay() function again.
+function checkOverlay($actualCharacter, $others) {
+  // When the character touches another one, store the other character object in an "array"
+  let characterCollision = $($actualCharacter).collision($others);
+  // When the character touches the player, store the player object in an "array"
+  let playerCollision = $($actualCharacter).collision($playerCharacter);
+  // If the characterCollision or the playerCollision "array" contains more than zero object...
+  if (characterCollision.length > 0 || playerCollision.length > 0) {
+    // Display the actual character with a random position and rotation angle
+    displayElement($actualCharacter);
+    // After 100 millisecons, check again if the actual character overlays another one
+    setTimeout(function() {
+      checkOverlay($actualCharacter, $others);
+    }, 1);
+  }
+}
+
+// displayPaperRolls()
+//
+// For each paper roll, creates a new div, displays it randomly and adds the class "paperRoll"
+function displayPaperRolls() {
+  // For each character...
+  for (let i = 0; i < numberOfPaperRoll; i++) {
+    // Create div that contains the paper roll and store it in a variable
+    let $paperRollPerimeter = $("<div></div>");
+    // Create div that contains the paper roll image and store it in a variable
+    let $paperRollImg = $("<div></div>");
+    // Add the class "paperRollPerimeter" to the div that contains the paper roll
+    $paperRollPerimeter.addClass("paperRollPerimeter");
+    // Add the class "paperRoll" to the div with the image and append it to the div that contains the paperRoll (had issues to get accurate distance with rotated div, so $paperRollImg rotates and $paperRollPerimeter is used to check collision)
+    $paperRollImg.addClass("paperRoll").appendTo($paperRollPerimeter);
+    // Set a random position and rotation angle for the div that contains the paper roll and display it in the body
+    displayElement($paperRollPerimeter);
+  }
+}
+// displayElement()
+//
+// Gets a random number for the position and rotation angle and displays elements randomly in the body
+// Function used to display the characters other than the player and for toilet paper rolls
+function displayElement($elementPerimeter) {
+  // Get a random number between 0 and the width of the body for the left position
+  let leftPosition = Math.random() * $('body').width();
+  // Get a random number between 0 and de height of the body for the top position
+  let topPosition = Math.random() * $('body').height();
+  // Set the position of the div to the random one we just created
+  $elementPerimeter.offset({
+    top: topPosition,
+    left: leftPosition
+  });
+  // Get a random number for the rotation angle in radians
+  let rotation = Math.random() * Math.PI * 2; // 2 Pi radians = 360 degrees
+  // Rotate the children (the image) of the div with css according to the random rotation angle
+  $elementPerimeter.children().css({
+    transform: 'rotate(' + rotation + 'rad)'
+  });
+  // Add the div to the body
+  $elementPerimeter.appendTo($('body'));
+}
+
+// moveCharacters()
+//
+// For each character, sets a random velocity and changes it each 2 seconds.
+// Makes the character go to the opposite direction when it touches another one
+// and makes the character walk, move and rotate at the walkingSpeed
+function moveCharacters() {
+  // For each character...
+  $('.characterPerimeter').each(function(index) {
+    // Set the maximum and minimum velocity
+    let maxVelocity = 20;
+    let minVelocity = -20;
+    // Create variables for the character velocity X and Y
+    let characterVelocityX;
+    let characterVelocityY;
+    // Create a variable for the actual character
+    let $character = $(this);
+    // Create a virable for the characters other than the actual one
+    let $otherCharacters = $('.characterPerimeter').not($character);
+    // Set the current walk frame to 0
+    let characterWalkFrame = 0;
+    // Set the running away state to false
+    let runningAway = false;
+
+    // Create an interval that sets random velocity X and Y each 2000 milliseconds
+    // if the character is not running away
+    setInterval(function() {
+      // If the character is not running away form another character...
+      if (runningAway === false) {
+        // Set velocity X and Y to a random number between max and min velocity
+        characterVelocityX = Math.random() * (maxVelocity - minVelocity) + minVelocity;
+        characterVelocityY = Math.random() * (maxVelocity - minVelocity) + minVelocity;
+      }
+    }, 2000);
+    // Create an interval that makes the character walk and move at the walkingSpeed
+    setInterval(function() {
+      // Add 1 to the current walk frame
+      characterWalkFrame++;
+      // If the current walk frame is greater or equal to the numer of element in the walk pattern...
+      if (characterWalkFrame >= walkPattern.length) {
+        // Set the current walk frame back to 0
+        characterWalkFrame = 0;
+      }
+      // If the character is not running away from another character
+      if (runningAway === false) {
+        // When the character touches another character, store the other character object in an "array", in a variable
+        let characterCollision = $($character).collision($otherCharacters);
+        // If the "array" with the touched character contains more than 0 object...
+        if (characterCollision.length > 0) {
+          // Set the running away state to true
+          runningAway = true;
+          // Make the player go to the opposite direction by multiplying its velocity by -1
+          characterVelocityX *= -1;
+          characterVelocityY *= -1;
+          // After 100 * index miliseconds, set the running away state back to false
+          setTimeout(function() {
+            runningAway = false;
+          }, index * 500); //(had to use the index in the delay or else the 2 characters would sometimes be stuck in a loop walking together and change velocity at the same time)
+        }
+      }
+      // Make the character walk, move and and rotate
+      walk($character, characterVelocityX, characterVelocityY, characterWalkFrame);
+      // When the character goes out the body, make it wrap
+      handleWrapping($character);
+    }, walkingSpeed);
+  });
+}
+
+// handleWrapping()
+//
+// Checks if the character has gone off the body and wraps it to the other side if so
+function handleWrapping(wrappingCharacter) {
+  // Variables for body width and height
+  let bodyWidth = $('body').width();
+  let bodyHeight = $('body').height();
+  // Variable for the character's position
+  let $position = wrappingCharacter.offset();
+  // If the character's left position is less than 0...
+  if ($position.left < 0) {
+    // Wrap it to the other side of the body by setting the left position to the body width
+    wrappingCharacter.offset({
+      left: bodyWidth
+    });
+  }
+  // If the character's left position is greater than the body width...
+  else if ($position.left > bodyWidth) {
+    // Wrap it to the other side of the body by setting the left position to 0
+    wrappingCharacter.offset({
+      left: 0
+    });
+  }
+  // If the character's top position is less than 0...
+  if ($position.top < 0) {
+    // Wrap it to the other side of the body by setting the top position to the body height
+    wrappingCharacter.offset({
+      top: bodyHeight
+    });
+  }
+  // If the character's top position is greater than the body height...
+  else if ($position.top > bodyHeight) {
+    // Wrap it to the other side of the body by setting the top position to 0
+    wrappingCharacter.offset({
+      top: 0
+    });
+  }
+}
+
+// mousePlayerPosition()
+//
+// Checks the mouse and player positions and sets the player moving state
+function mousePlayerPosition() {
+  // Check the player position and store it in a variable (we can access playerPosition.left & playerPosition.top)
+  playerPosition = $playerCharacter.offset();
+  // console.log("player left: " + playerPosition.left + ", player top: " + playerPosition.top);
+  // Check the mouse position: when it moves, get the new position and store it in a variable
+  $("body").mousemove(function(event) {
+    mousePosition.left = event.pageX;
+    mousePosition.top = event.pageY;
+  });
+  // console.log("mouse left: " + mousePosition.left + ", mouse top: " + mousePosition.top);
+  // Calculate the X & Y distance between the mouse and the center of the player
+  let distanceX = mousePosition.left - playerPosition.left - $playerCharacter.width() / 2;
+  let distanceY = mousePosition.top - playerPosition.top - $playerCharacter.height() / 2;
+  // Use pythagorean theorem to calculate the distance between the mouse and the player
+  let distance = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
+  // console.log("distance: " + distance + "distanceX: " + distanceX + "distanceY: " + distanceY);
+  // Set velocity X & Y according to the distance X & Y
+  playerVelocityX = distanceX / 10;
+  playerVelocityY = distanceY / 10;
+  // If the distance between player and mouse is less or equal to 50px...
+  if (distance <= 50) {
+    // Set the player moving state to false
+    playerMoving = false;
+  } else {
+    // Else, set the player moving state to true
+    playerMoving = true;
+  }
+}
+
+// walk()
+//
+// Check if the player is moving and if so make the player walk, move and rotate
+function movePlayer() {
+  // If the player has to move/is moving...
+  if (playerMoving === true) {
+    // Add 1 to the current walk frame
+    playerWalkFrame++;
+    // If the current walk frame is greater or equal to the number of elements in the walk pattern...
+    if (playerWalkFrame >= walkPattern.length) {
+      // Set the current walk frame back to 0
+      playerWalkFrame = 0;
+    }
+  }
+  // Else, if the player is not moving...
+  else {
+    // Make the player standing by setting its walk frame to 1
+    playerWalkFrame = 1;
+    // Stop moving the player by setting its velocity to 0
+    playerVelocityX = 0;
+    playerVelocityY = 0;
+  }
+  // Make the player walk, move and rotate
+  walk($playerCharacter, playerVelocityX, playerVelocityY, playerWalkFrame);
+}
+
+// Walk()
+// Animes the character's sprite sheet, moves the character and rotates it.
+// Function used for the player and the other characters
+function walk($walkingCharacter, velocityX, velocityY, currentWalkFrame) {
+  // Get the character position and store it un a variable
+  let position = $walkingCharacter.offset();
+  // Move the character by adding velocity to its top and left position
+  $walkingCharacter.offset({
+    top: position.top + velocityY,
+    left: position.left + velocityX
+  });
+  // Animates the background image position according to the current walk frame
+  $walkingCharacter.children().css('background-position', walkPattern[currentWalkFrame]);
+  // Set the character rotation angle according ti the X & Y velocity (in radians)
+  let rotationAngle = Math.atan(velocityY / velocityX) + Math.PI / 2; // Math.PI/2 radians === 90 degrees
+  // If the distanceX is negative...
+  if (velocityX < 0) {
+    // Add pi randians to the rotation angle (180 degrees)
+    rotationAngle += Math.PI;
+  }
+  // And rotate the character image according to the rotation angle
+  $walkingCharacter.children().css({
+    transform: 'rotate(' + rotationAngle + 'rad)'
   });
 }
 
@@ -167,7 +483,7 @@ function playerDead() {
   // Stop the interval that checks if the player touched something
   clearInterval(collisionInterval);
   // Stop the interval that moves the player
-  clearInterval(playerWalk);
+  clearInterval(playerWalkInterval);
   // Stop the interval that checks the distance between mouse and player
   clearInterval(mousePlayerInterval);
   // Remove all the characters and the paper rolls
@@ -251,7 +567,11 @@ function atLeastDialog() {
   // Display the dialog box with the new options
   $('#gameoverDialog').dialog({
     modal: false, // Don't blur the background
-    position: { my: "right center", at: "right center", of: "body" }, // Set position
+    position: {
+      my: "right center",
+      at: "right center",
+      of: "body"
+    }, // Set position
     height: 600, // Set dimensions
     width: 500,
     buttons: [{
@@ -267,11 +587,11 @@ function atLeastDialog() {
     }],
   });
   // After a delay of 2 seconds (2000 milliseconds)...
-  setTimeout(function(){
+  setTimeout(function() {
     // Execute the following steps a thousand times
-    for (let i = 0; i<finalPaperRolls; i++) {
+    for (let i = 0; i < finalPaperRolls; i++) {
       // After a delay related to the number of times we ran the loop...
-      setTimeout(function(){
+      setTimeout(function() {
         // Create a new div for the paper roll and store it in a variable
         let $paperRollPerimeter = $("<div></div>");
         // Create a new div for the paper roll image and store it in a variable
@@ -283,312 +603,11 @@ function atLeastDialog() {
         // Set a random position and rotation angle for the div that contains the paper roll and display it in the body
         displayElement($paperRollPerimeter);
         // If we are displaying the last paper roll of the loop...
-        if (i===finalPaperRolls-1){
+        if (i === finalPaperRolls - 1) {
           // Show the "new game" button by changing its display mode with css
           $('#newGameButton').css('display', 'block');
         }
-      },i); // Used "i" for the delay so the paper rolls are displayed one after the other
+      }, i); // Used "i" for the delay so the paper rolls are displayed one after the other
     }
-  },2000);
-}
-
-// checkPlayerCollision()
-//
-// Uses .collision() function (from jquery-collision extension) to check if the player touches a character.
-// If so, animes the player with the "explode" effect...
-function checkPlayerCollision() {
-  // When the player touches a character, store the character object in an "array", in a variable
-  let touchedCharacter = $($playerCharacter).collision('.characterPerimeter'); // function from the library extension "jquery-collision"
-  // When the player touches a paper roll, store the paper roll object in an "array", in a variable
-  let touchedPaperRoll = $($playerCharacter).collision('.paperRollPerimeter');
-  // If the "array" with the touched character contains more than 0 object...
-  if (touchedCharacter.length > 0) {
-      // Anime the player with the "explode" effect and when the animation is done...
-      $playerCharacter.effect( "explode", "linear", 400, function() {
-        // Stop the animation effect
-        $playerCharacter.stop(true, true);
-        // Show the player character
-        $playerCharacter.show();
-        contactWithVirus += 20;
-      } );
-  }
-  // If the "array" with the touched toilet paper rolls contains more than 0 object...
-  if (touchedPaperRoll.length > 0) {
-    // Add 1 to the score
-    score += 1;
-    // And change its position and roatation angle to a random one
-    displayElement($(touchedPaperRoll[0]));
-    // Display the new score
-    $('#score').html(score);
-  }
-}
-
-// displayCharacters()
-//
-// For each character, creates a new div, displays it randomly, adds the class "character",
-// sets the background image as the character image and checks if it overlays another character.
-// If so, displays that character randomly again until it overlays no other character
-function displayCharacters() {
-  // For each character...
-  for (let i = 1; i<numberOfCharacters+1; i++) {
-    // Create a new div that contains the character and store it in a variable
-    let $characterPerimeter = $("<div></div>");
-    // Create a new div with the character image and store it in a variable
-    let $characterImg = $("<div></div>");
-    // Add the class "characterPerimeter" to the div that contains the character
-    $characterPerimeter.addClass("characterPerimeter");
-    // Add the class "character" to the div with the character image and append it to the div that contains the character (had issues to get accurate distance with rotated div, so $characterImg rotates and $characterPerimeter is used to check collision)
-    $characterImg.addClass("character").appendTo($characterPerimeter);
-    // Set a random position and rotation angle for the div that contains the character and display it in the body
-    displayElement($characterPerimeter);
-    // Set the background image to the character number we are at
-    $characterImg.css('background-image', 'url(../assets/images/characters-0'+i+'.png)');
-  }
-  // Once all the characters are set, for each one...
-  $('.characterPerimeter').each(function() {
-    // Store the actual character in a variable
-    let $character = $(this);
-    // Store characters other than the actual one in a variable
-    let $otherCharacters = $('.characterPerimeter').not($character);
-    // Check if the actual character overlays the other ones and if so, display it randomly until it overlays no other character
-    checkOverlay($character, $otherCharacters);
-  });
-}
-
-// checkOverlay()
-//
-// Checks if the actual character overlays another one or the player.
-// If so, displays it randomly and calls checkOverlay() function again.
-function checkOverlay($actualCharacter, $others) {
-  // When the character touches another one, store the other character object in an "array"
-  let characterCollision = $($actualCharacter).collision($others);
-  // When the character touches the player, store the player object in an "array"
-  let playerCollision = $($actualCharacter).collision($playerCharacter);
-  // If the characterCollision or the playerCollision "array" contains more than zero object...
-  if (characterCollision.length > 0 || playerCollision.length > 0) {
-    // Display the actual character with a random position and rotation angle
-    displayElement($actualCharacter);
-    // After 100 millisecons, check again if the actual character overlays another one
-    setTimeout(function() {
-      checkOverlay($actualCharacter, $others);
-    }, 1);
-  }
-}
-
-// displayPaperRolls()
-//
-// For each paper roll, creates a new div, displays it randomly and adds the class "paperRoll"
-function displayPaperRolls() {
-  // For each character...
-  for (let i = 0; i<numberOfPaperRoll; i++) {
-    // Create div that contains the paper roll and store it in a variable
-    let $paperRollPerimeter = $("<div></div>");
-    // Create div that contains the paper roll image and store it in a variable
-    let $paperRollImg = $("<div></div>");
-    // Add the class "paperRollPerimeter" to the div that contains the paper roll
-    $paperRollPerimeter.addClass("paperRollPerimeter");
-    // Add the class "paperRoll" to the div with the image and append it to the div that contains the paperRoll (had issues to get accurate distance with rotated div, so $paperRollImg rotates and $paperRollPerimeter is used to check collision)
-    $paperRollImg.addClass("paperRoll").appendTo($paperRollPerimeter);
-    // Set a random position and rotation angle for the div that contains the paper roll and display it in the body
-    displayElement($paperRollPerimeter);
-  }
-}
-// displayElement()
-//
-// Gets a random number for the position and rotation angle and displays elements randomly in the body
-// Function used to display the characters other than the player and for toilet paper rolls
-function displayElement($elementPerimeter) {
-  // Get a random number between 0 and the width of the body for the left position
-  let leftPosition = Math.random() * $('body').width();
-  // Get a random number between 0 and de height of the body for the top position
-  let topPosition = Math.random() * $('body').height();
-  // Set the position of the div to the random one we just created
-  $elementPerimeter.offset({ top: topPosition, left: leftPosition });
-  // Get a random number for the rotation angle in radians
-  let rotation = Math.random() * Math.PI *2;// 2 Pi radians = 360 degrees
-  // Rotate the children (the image) of the div with css according to the random rotation angle
-  $elementPerimeter.children().css({transform: 'rotate('+rotation+'rad)'});
-  // Add the div to the body
-  $elementPerimeter.appendTo($('body'));
-}
-
-// moveCharacters()
-//
-// For each character, sets a random velocity and changes it each 2 seconds.
-// Makes the character go to the opposite direction when it touches another one
-// and makes the character walk, move and rotate at the walkingSpeed
-function moveCharacters() {
-  // For each character...
-  $('.characterPerimeter').each(function(index) {
-    // Set the maximum and minimum velocity
-    let maxVelocity = 20;
-    let minVelocity = -20;
-    // Create variables for the character velocity X and Y
-    let characterVelocityX;
-    let characterVelocityY;
-    // Create a variable for the actual character
-    let $character = $(this);
-    // Create a virable for the characters other than the actual one
-    let $otherCharacters = $('.characterPerimeter').not($character);
-    // Set the current walk frame to 0
-    let characterWalkFrame = 0;
-    // Set the running away state to false
-    let runningAway = false;
-
-    // Create an interval that sets random velocity X and Y each 2000 milliseconds
-    // if the character is not running away
-    setInterval(function() {
-      // If the character is not running away form another character...
-      if (runningAway === false) {
-        // Set velocity X and Y to a random number between max and min velocity
-        characterVelocityX = Math.random() * (maxVelocity - minVelocity) + minVelocity;
-        characterVelocityY = Math.random() * (maxVelocity - minVelocity) + minVelocity;
-      }
-    }, 2000);
-    // Create an interval that makes the character walk and move at the walkingSpeed
-    setInterval(function() {
-      // Add 1 to the current walk frame
-      characterWalkFrame ++;
-      // If the current walk frame is greater or equal to the numer of element in the walk pattern...
-      if (characterWalkFrame >= walkPattern.length) {
-        // Set the current walk frame back to 0
-        characterWalkFrame = 0;
-      }
-      // If the character is not running away from another character
-      if (runningAway === false) {
-        // When the character touches another character, store the other character object in an "array", in a variable
-        let characterCollision = $($character).collision($otherCharacters);
-        // If the "array" with the touched character contains more than 0 object...
-        if (characterCollision.length > 0) {
-          // Set the running away state to true
-          runningAway = true;
-          // Make the player go to the opposite direction by multiplying its velocity by -1
-          characterVelocityX *= -1;
-          characterVelocityY *= -1;
-          // After 100 * index miliseconds, set the running away state back to false
-          setTimeout(function() {
-            runningAway = false;
-          },index*500); //(had to use the index in the delay or else the 2 characters would sometimes be stuck in a loop walking together and change velocity at the same time)
-        }
-      }
-      // Make the character walk, move and and rotate
-      walk($character, characterVelocityX, characterVelocityY, characterWalkFrame);
-      // When the character goes out the body, make it wrap
-      handleWrapping($character);
-    },walkingSpeed);
-  });
-}
-
-// handleWrapping()
-//
-// Checks if the character has gone off the body and wraps it to the other side if so
-function handleWrapping(wrappingCharacter) {
-  // Variables for body width and height
-  let bodyWidth = $('body').width();
-  let bodyHeight = $('body').height();
-  // Variable for the character's position
-  let $position = wrappingCharacter.offset();
-  // If the character's left position is less than 0...
-  if ($position.left < 0) {
-    // Wrap it to the other side of the body by setting the left position to the body width
-    wrappingCharacter.offset({ left: bodyWidth });
-  }
-  // If the character's left position is greater than the body width...
-  else if ($position.left > bodyWidth) {
-    // Wrap it to the other side of the body by setting the left position to 0
-    wrappingCharacter.offset({ left: 0 });
-  }
-  // If the character's top position is less than 0...
-  if ($position.top < 0) {
-    // Wrap it to the other side of the body by setting the top position to the body height
-    wrappingCharacter.offset({ top: bodyHeight });
-  }
-  // If the character's top position is greater than the body height...
-  else if ($position.top > bodyHeight) {
-    // Wrap it to the other side of the body by setting the top position to 0
-    wrappingCharacter.offset({ top: 0 });
-  }
-}
-
-// mousePlayerPosition()
-//
-// Checks the mouse and player positions and sets the player moving state
-function mousePlayerPosition() {
-  // Check the player position and store it in a variable (we can access playerPosition.left & playerPosition.top)
-  playerPosition = $playerCharacter.offset();
-  // console.log("player left: " + playerPosition.left + ", player top: " + playerPosition.top);
-  // Check the mouse position: when it moves, get the new position and store it in a variable
-  $("body").mousemove(function(event){
-    mousePosition.left = event.pageX;
-    mousePosition.top = event.pageY;
-  });
-  // console.log("mouse left: " + mousePosition.left + ", mouse top: " + mousePosition.top);
-  // Calculate the X & Y distance between the mouse and the center of the player
-  let distanceX = mousePosition.left - playerPosition.left - $playerCharacter.width()/2;
-  let distanceY = mousePosition.top - playerPosition.top - $playerCharacter.height()/2;
-  // Use pythagorean theorem to calculate the distance between the mouse and the player
-  let distance = Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY,2));
-  // console.log("distance: " + distance + "distanceX: " + distanceX + "distanceY: " + distanceY);
-  // Set velocity X & Y according to the distance X & Y
-  playerVelocityX = distanceX/10;
-  playerVelocityY = distanceY/10;
-  // If the distance between player and mouse is less or equal to 50px...
-  if (distance <= 50) {
-    // Set the player moving state to false
-    playerMoving = false;
-  }
-  else {
-    // Else, set the player moving state to true
-    playerMoving = true;
-  }
-}
-
-// walk()
-//
-// Check if the player is moving and if so make the player walk, move and rotate
-function playerWalk() {
-  // If the player has to move/is moving...
-  if (playerMoving === true) {
-    // Add 1 to the current wlak frame
-    playerWalkFrame ++;
-    // If the current walk frame is greater or equal to the number of elements in the walk pattern...
-    if (playerWalkFrame >= walkPattern.length) {
-      // Set the current walk frame back to 0
-      playerWalkFrame = 0;
-    }
-    // Make the player walk, move and rotate
-    walk($playerCharacter, playerVelocityX, playerVelocityY, playerWalkFrame);
-    // Place the div that contains the perimeter ellipses at the center of the player
-    $('#perimeter').position({
-      my: "center center",
-      at: "center center",
-      of: "#playerPerimeter"
-    });
-  }
-  // Else, if the player is not moving...
-  else {
-    // Add the second element of the walk pattern as the background position (standing)
-    $playerCharacter.css('background-position',walkPattern[1]);
-  }
-}
-
-// Walk()
-// Animes the character's sprite sheet, moves the character and rotates it.
-// Function used for the player and the other characters
-function walk($walkingCharacter, velocityX, velocityY, currentWalkFrame) {
-  // Get the character position and store it un a variable
-  let position = $walkingCharacter.offset();
-  // Move the character by adding velocity to its top and left position
-  $walkingCharacter.offset({ top: position.top + velocityY, left: position.left + velocityX });
-  // Animates the background image position according to the current walk frame
-  $walkingCharacter.children().css('background-position',walkPattern[currentWalkFrame]);
-  // Set the character rotation angle according ti the X & Y velocity (in radians)
-  let rotationAngle = Math.atan(velocityY/velocityX) + Math.PI/2;// Math.PI/2 radians === 90 degrees
-  // If the distanceX is negative...
-  if(velocityX < 0) {
-    // Add pi randians to the rotation angle (180 degrees)
-    rotationAngle += Math.PI;
-  }
-  // And rotate the character image according to the rotation angle
-  $walkingCharacter.children().css({transform: 'rotate('+rotationAngle+'rad)'});
+  }, 2000);
 }

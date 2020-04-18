@@ -5,7 +5,6 @@ In this case it's just padding and margin to 0
 so the canvas is flush with the top left corner.
 
 **********************************************/
-
 body {
   padding: 0;
   margin: 0;
@@ -24,7 +23,7 @@ body {
 #progressbar {
   position: fixed;
   height: 10px;
-  width:96%;
+  width: 96%;
   top: 15px;
   left: 10px;
   margin: 0px 0px;
@@ -55,52 +54,56 @@ body {
 }
 
 #playerPerimeter {
-  position:relative;
+  position: relative;
   width: 132px;
   height: 132px;
   border-style: solid;
   color: red;
+  left: 50%;
+  top: 50%;
 }
+
 #perimeter {
   width: auto;
   height: auto;
-  position:absolute;
+  position: absolute;
   /* color:yellow; */
   /* border-style: solid; */
-  /* left:50%; */
-  /* top:50%; */
-  width:400px;
-  height:400px;
+  width: 400px;
+  height: 400px;
   z-index: -1;
 }
+
 #player {
-	  position: absolute;
-	  width: 132px;
-	  height: 132px;
-    background: url('../assets/images/characters-01.png') no-repeat;
-    background-position: 0px 0px;
-    /* border-style: solid; */
-    transform: rotate(15deg);
+  position: absolute;
+  width: 132px;
+  height: 132px;
+  background: url('../assets/images/characters-01.png') no-repeat;
+  background-position: 0px 0px;
+  /* border-style: solid; */
+  transform: rotate(15deg);
 }
+
 .characterPerimeter {
-  position:absolute;
+  position: absolute;
   display: block;
-    padding: 0px 0px;
-    margin: 0px 0px;
-	  width: 132px;
-	  height: 132px;
-    border-style: solid;
+  padding: 0px 0px;
+  margin: 0px 0px;
+  width: 132px;
+  height: 132px;
+  border-style: solid;
 }
+
 .character {
   display: block;
   position: absolute;
-    padding: 0px 0px;
-    margin: 0px 0px;
-	  width: 132px;
-	  height: 132px;
-    /* border-style: solid; */
-    background-position: 0px 0px;
-    transform-origin: 50% 50%;
+  padding: 0px 0px;
+  margin: 0px 0px;
+  width: 132px;
+  height: 132px;
+  /* border-style: solid; */
+  background-position: 0px 0px;
+  transform-origin: 50% 50%;
 }
 
 .paperRollPerimeter {
@@ -122,20 +125,22 @@ body {
 /* Dialog box: */
 /* Hide the close button */
 .dialogStyle .ui-dialog-titlebar-close {
-    display: none;
-  }
+  display: none;
+}
+
 /* Content of the dialog box */
 .dialogStyle .ui-dialog-content {
-    font-size: 40px;
-    font-weight: bold;
-    text-align: center;
-  }
+  font-size: 40px;
+  font-weight: bold;
+  text-align: center;
+}
+
 /* Title bar of the diaog box */
 .dialogStyle .ui-dialog-titlebar {
-      background-color: black;
-      height: 40px;
-    }
+  background-color: black;
+  height: 40px;
+}
 
 #newGameButton {
-  display:none;
+  display: none;
 }
