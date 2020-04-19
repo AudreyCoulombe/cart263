@@ -5,8 +5,7 @@
 The Social Distancing Game
 Audrey Coulombe
 
-This is a template. You must fill in the title,
-author, and this description to match your project!
+A game where you have to avoid contact with other people in order to survive (not get infected) and collect as many toilet paper rolls as possible. Use your mouse to move the player around, pick up the hand sanitizer to decrease your level of infection and pick up the three protection items to get immunity for 10 seconds.
 
 Used the following link as a reference for the walk pattern: https://digipiph.com/blog/creating-sprite-character-movement-javascript-and-jquery-ver-10
 ******************/
@@ -18,6 +17,8 @@ let playerMoving = false;
 let gotMask = false;
 let gotGlove = false;
 let gotOverall = false;
+let playerProtected = false;
+let playerIsDead = false;
 // Position variables
 let playerPosition; // Note to myself: I can access playerPosition.left and playerPosition.top
 let mousePosition = {
@@ -53,13 +54,57 @@ let $pooImage;
 // Variable with the number of paper rolls that are displayed when the game is done
 let finalPaperRolls = 1000;
 
-// When the page is ready, run the documentReady() function
-$(document).ready(documentReady);
+// When the page is ready...
+$(document).ready(function () {
+  // Add an event handler on the page that runs the instructionPage function when we click
+  $(document).click(instructionPage);
+});
 
-// documentReady()
+// setup()
+//
+// The P5 function that runs once when the document is ready
+// Creates a canvas and append it to the div with the id "perimeter"
+// Displays ellipses of different sizes and colors that represent the perimeter around the player
+function setup() {
+  // Create the canvas and store it in a variable
+  let canvas = createCanvas(400, 400);
+  // Make the div with the id "perimeter" the parent of the canvas
+  canvas.parent('perimeter');
+  // Set the stroke and filling parameters for the ellipses
+  noFill();
+  strokeWeight(2);
+  stroke(255, 0, 0);
+  // Display 3 red ellipses of different sizes from the center of the cavas
+  ellipse(height / 2, width / 2, 100, 100);
+  ellipse(height / 2, width / 2, 150, 150);
+  ellipse(height / 2, width / 2, 200, 200);
+  // Set the new stroke parameters
+  strokeWeight(1);
+  stroke(255, 140, 0);
+  // Display an orange ellipse from the center of the canvas
+  ellipse(height / 2, width / 2, 250, 250);
+  // Set the new stroke color
+  stroke(255, 255, 0);
+  // Display a yellow ellipse from the center of the canvas
+  ellipse(height / 2, width / 2, 300, 300);
+  // Set the new stroke color
+  stroke(0, 255, 0);
+  // Display a green ellipse from the center of the canvas
+  ellipse(height / 2, width / 2, 350, 350);
+}
+
+// instructionPage()
+// 
+function instructionPage() {
+  // Change the background image of the body to the image with instructions
+  $('body').css('background-image', 'url(../assets/images/instructionPage.png)');
+  $(document).click(startGame);
+}
+
+// startGame()
 //
 //
-function documentReady() {
+function startGame() {
   // Set the number of contact with virus and the initial score to 0
   contactWithVirus = 0;
   score = 0;
@@ -69,6 +114,8 @@ function documentReady() {
   gotMask = false;
   gotGlove = false;
   gotOverall = false;
+  playerProtected = false;
+  playerIsDead = false;
   // Make the protection images transparent to say the player didn't pick it up yet
   $('.protectionCollected').css("opacity", "0.25");
   // Show the div that displays the protection items to collect (hidden when the player is infected)
@@ -104,6 +151,8 @@ function documentReady() {
   $('.paperRollPerimeter').remove();
   // Check if a key is pressed and if so, runs the checkProtection() function
   $(document).keypress(checkProtection);
+
+  $(document).off( "click" );
   // Display and update the progressbar each 60 milliseconds and store the interval in a variable
   progressbarInterval = setInterval(displayProgressbar, 60);
   // Display the characters other than the player randomly in the body
@@ -125,39 +174,6 @@ function documentReady() {
   }, 2000);
 }
 
-// setup()
-//
-// The P5 function that runs once when the document is ready
-// Creates a canvas and append it to the div with the id "perimeter"
-// Displays ellipses of different sizes and colors that represent the perimeter around the player
-function setup() {
-  // Create the canvas and store it in a variable
-  let canvas = createCanvas(400, 400);
-  // Make the div with the id "perimeter" the parent of the canvas
-  canvas.parent('perimeter');
-  // Set the stroke and filling parameters for the ellipses
-  noFill();
-  strokeWeight(2);
-  stroke(255, 0, 0);
-  // Display 3 red ellipses of different sizes from the center of the cavas
-  ellipse(height / 2, width / 2, 100, 100);
-  ellipse(height / 2, width / 2, 150, 150);
-  ellipse(height / 2, width / 2, 200, 200);
-  // Set the new stroke parameters
-  strokeWeight(1);
-  stroke(255, 140, 0);
-  // Display an orange ellipse from the center of the canvas
-  ellipse(height / 2, width / 2, 250, 250);
-  // Set the new stroke color
-  stroke(255, 255, 0);
-  // Display a yellow ellipse from the center of the canvas
-  ellipse(height / 2, width / 2, 300, 300);
-  // Set the new stroke color
-  stroke(0, 255, 0);
-  // Display a green ellipse from the center of the canvas
-  ellipse(height / 2, width / 2, 350, 350);
-}
-
 // displayProgressbar()
 //
 // Displays and updates the progressbar according to the number of times the player touched another character. (The progressbar represent the level of "infection", once it is complete the player is "infected" and the game is over)
@@ -172,137 +188,6 @@ function displayProgressbar() {
   });
 }
 
-// checkPlayerCollision()
-//
-// Uses .collision() function (from jquery-collision extension) to check if the player touches a character, a paper roll, a sanitizer, glove, mask or overall.
-function checkPlayerCollision() {
-  // When the player touches a character, store the character object in an "array", in a variable
-  let touchedCharacter = $($playerCharacter).collision('.characterPerimeter'); // function from the library extension "jquery-collision"
-  // When the player touches a paper roll, store the paper roll object in an "array", in a variable
-  let touchedPaperRoll = $($playerCharacter).collision('.paperRollPerimeter');
-  // When the player touches a hand sanitizer, store it in an "array", in a variable
-  let touchedSanitizer = $($playerCharacter).collision('.sanitizerPerimeter');
-  // When the player touches a glove, store it in an "array", in a variable
-  let touchedGlove = $($playerCharacter).collision('.glovePerimeter');
-  // When the player touches a mask, store it in an "array", in a variable
-  let touchedMask = $($playerCharacter).collision('.maskPerimeter');
-  // When the player touches an overall, store it in an "array", in a variable
-  let touchedOverall = $($playerCharacter).collision('.overallPerimeter');
-
-  // If the "array" with the touched character contains more than 0 object...
-  if (touchedCharacter.length > 0) {
-    if (gotGlove === false || gotMask === false || gotOverall === false) {
-      // Anime the player with the "explode" effect and when the animation is done...
-      // $playerCharacter.effect("explode", "linear", 400, function() {
-      //   // Stop the animation effect
-      //   $playerCharacter.stop(true, true);
-      //   // Show the player character
-      //   $playerCharacter.show();
-      // });
-      contactWithVirus += 10;
-    }
-  }
-
-  // If the "array" with the touched toilet paper rolls contains more than 0 object...
-  if (touchedPaperRoll.length > 0) {
-    // Add 1 to the score
-    score += 1;
-    // And change its position and roatation angle to a random one
-    displayElement($(touchedPaperRoll[0]));
-    // Display the new score
-    $('#score').html(score);
-    // Display protection equipment according to the score
-    displayProtection();
-  }
-
-  // If the "array" with the touched hand sanitizer contains more than 0 object...
-  if (touchedSanitizer.length > 0) {
-    // Remove the sanitizer
-    $('.sanitizerPerimeter').remove();
-    // After a delay of 8 seconds, display another sanitizer randomly in the body
-    displaySanitizer();
-    // Lower the level of contact with the virus
-    contactWithVirus -= 20;
-  }
-
-  // If the "array" with the touched glove contains more than 0 object...
-  if (touchedGlove.length > 0) {
-    // Set the gotGlove state to true;
-    gotGlove = true;
-    // Remove the glove
-    $('.glovePerimeter').remove();
-    // Change the opacity of the glove image in the protection items box
-    $('#protectionGlove').css("opacity", "1");
-  }
-
-  // If the "array" with the touched mask contains more than 0 object...
-  if (touchedMask.length > 0) {
-    // Set the gotMask state to true;
-    gotMask = true;
-    // Remove the mask
-    $('.maskPerimeter').remove();
-    // Change the opacity of the mask image in the protection items box
-    $('#protectionMask').css("opacity", "1");
-  }
-
-  // If the "array" with the touched overall contains more than 0 object...
-  if (touchedOverall.length > 0) {
-    // Set the gotOverall state to true;
-    gotOverall = true;
-    // Remove the overall
-    $('.overallPerimeter').remove();
-    // Change the opacity of the overall image in the protection items box
-    $('#protectionOverall').css("opacity", "1");
-  }
-
-  // If the player collected the glove, the mask and the overall...
-  if (gotGlove ===true && gotMask === true && gotOverall === true) {
-    // Set the timer bar (green div) opacity to 0.8
-    $('#timerBar').css("opacity", "0.8");
-    // Write text in the timer bar to tell the player he has to press a key
-    $('#timerBar').html("Press any key for protection");
-    $('.protectionCollected').css("opacity", "0.25");
-  }
-}
-
-// checkProtection()
-//
-//
-function checkProtection() {
-  // If the player collected the glove, the mask and the overall...
-  if (gotGlove ===true && gotMask === true && gotOverall === true) {
-    // Remove the keypress event handler
-    $(document).off( "keypress" );
-    // Remove the text in the timer bar
-    $('#timerBar').html("");
-    // Set the opacity of the protection equipment collected back to 0.25
-    $('.protectionCollected').css("opacity", "0.25");
-    // Change the image of the player for an image of the player with protection
-    $('#player').css("background", "url(../assets/images/playerProtected.png)");
-    // Each 100 milliseconds, reduce the height of the timer bar by 3 pixels and store the interval in a variable
-    let playerProtectedInterval = setInterval(function() {
-      $('#timerBar').css("height", "-=3");
-    },100);
-
-    // After a delay of 10 seconds (10000 milliseconds)...
-    setTimeout(function(){
-      // Set the following booleans to false to say the player didn't collect any protection equipment yet
-      gotGlove = false;
-      gotMask = false;
-      gotOverall = false;
-      // Clear the interval that reduces the height of the timer bar
-      clearInterval(playerProtectedInterval);
-      // Change the player image to the regular one
-      $('#player').css("background", "url(../assets/images/player.png)");
-      // Set the opacity of the timer bar back to 0
-      $('#timerBar').css("opacity", "0");
-      // Set the height of the timer bar back to 300 pixels
-      $('#timerBar').css("height", "300px");
-      // Add a keypress event handler that checks if the player is ready to get protection
-      $(document).keypress(checkProtection);
-    },10000);
-  }
-}
 // displayCharacters()
 //
 // For each character, creates a new div, displays it randomly, adds the class "character",
@@ -593,6 +478,7 @@ function handleWrapping(wrappingCharacter) {
 // Checks if the collecting character touches a paper roll.
 // If so, display the paper roll randomly in the page.
 function characterCollect($collectingCharacter) {
+  if (playerIsDead === false) {
     // When the character touches another character, store the other character object in an "array", in a variable
     let touchedPaperRoll = $($collectingCharacter).collision('.paperRollPerimeter');
     // If the "array" with the touched character contains more than 0 object...
@@ -600,6 +486,7 @@ function characterCollect($collectingCharacter) {
       // And change its position and roatation angle to a random one
       displayElement($(touchedPaperRoll[0]));
     }
+  }
 }
 
 // mousePlayerPosition()
@@ -686,6 +573,140 @@ function walk($walkingCharacter, velocityX, velocityY, currentWalkFrame) {
   });
 }
 
+// checkPlayerCollision()
+//
+// Uses .collision() function (from jquery-collision extension) to check if the player touches a character, a paper roll, a sanitizer, glove, mask or overall.
+function checkPlayerCollision() {
+  // When the player touches a character, store the character object in an "array", in a variable
+  let touchedCharacter = $($playerCharacter).collision('.characterPerimeter'); // function from the library extension "jquery-collision"
+  // When the player touches a paper roll, store the paper roll object in an "array", in a variable
+  let touchedPaperRoll = $($playerCharacter).collision('.paperRollPerimeter');
+  // When the player touches a hand sanitizer, store it in an "array", in a variable
+  let touchedSanitizer = $($playerCharacter).collision('.sanitizerPerimeter');
+  // When the player touches a glove, store it in an "array", in a variable
+  let touchedGlove = $($playerCharacter).collision('.glovePerimeter');
+  // When the player touches a mask, store it in an "array", in a variable
+  let touchedMask = $($playerCharacter).collision('.maskPerimeter');
+  // When the player touches an overall, store it in an "array", in a variable
+  let touchedOverall = $($playerCharacter).collision('.overallPerimeter');
+
+  // If the "array" with the touched character contains more than 0 object...
+  if (touchedCharacter.length > 0) {
+    if (playerProtected === false) {
+      // Anime the player with the "explode" effect and when the animation is done...
+      // $playerCharacter.effect("explode", "linear", 400, function() {
+      //   // Stop the animation effect
+      //   $playerCharacter.stop(true, true);
+      //   // Show the player character
+      //   $playerCharacter.show();
+      // });
+      contactWithVirus += 10;
+    }
+  }
+
+  // If the "array" with the touched toilet paper rolls contains more than 0 object...
+  if (touchedPaperRoll.length > 0) {
+    // Add 1 to the score
+    score += 1;
+    // And change its position and roatation angle to a random one
+    displayElement($(touchedPaperRoll[0]));
+    // Display the new score
+    $('#score').html(score);
+    // Display protection equipment according to the score
+    displayProtection();
+  }
+
+  // If the "array" with the touched hand sanitizer contains more than 0 object...
+  if (touchedSanitizer.length > 0) {
+    // Remove the sanitizer
+    $('.sanitizerPerimeter').remove();
+    // After a delay of 8 seconds, display another sanitizer randomly in the body
+    displaySanitizer();
+    // Lower the level of contact with the virus
+    contactWithVirus -= 20;
+  }
+
+  // If the "array" with the touched glove contains more than 0 object...
+  if (touchedGlove.length > 0) {
+    // Set the gotGlove state to true;
+    gotGlove = true;
+    // Remove the glove
+    $('.glovePerimeter').remove();
+    // Change the opacity of the glove image in the protection items box
+    $('#protectionGlove').css("opacity", "1");
+  }
+
+  // If the "array" with the touched mask contains more than 0 object...
+  if (touchedMask.length > 0) {
+    // Set the gotMask state to true;
+    gotMask = true;
+    // Remove the mask
+    $('.maskPerimeter').remove();
+    // Change the opacity of the mask image in the protection items box
+    $('#protectionMask').css("opacity", "1");
+  }
+
+  // If the "array" with the touched overall contains more than 0 object...
+  if (touchedOverall.length > 0) {
+    // Set the gotOverall state to true;
+    gotOverall = true;
+    // Remove the overall
+    $('.overallPerimeter').remove();
+    // Change the opacity of the overall image in the protection items box
+    $('#protectionOverall').css("opacity", "1");
+  }
+
+  // If the player collected the glove, the mask and the overall...
+  if (gotGlove ===true && gotMask === true && gotOverall === true) {
+    // Set the timer bar (green div) opacity to 0.8
+    $('#timerBar').css("opacity", "0.8");
+    // Write text in the timer bar to tell the player he has to press a key
+    $('#timerBar').html("Press any key for immunity");
+    $('.protectionCollected').css("opacity", "0.25");
+  }
+}
+
+// checkProtection()
+//
+//
+function checkProtection() {
+  // If the player collected the glove, the mask and the overall...
+  if (gotGlove ===true && gotMask === true && gotOverall === true) {
+    playerProtected = true;
+    // Remove the keypress event handler
+    $(document).off( "keypress" );
+    // Remove the text in the timer bar
+    $('#timerBar').html("");
+    // Set the opacity of the protection equipment collected back to 0.25
+    $('.protectionCollected').css("opacity", "0.25");
+    // Change the image of the player for an image of the player with protection
+    $('#player').css("background", "url(../assets/images/playerProtected.png)");
+    // Each 100 milliseconds, reduce the height of the timer bar by 3 pixels and store the interval in a variable
+    let playerProtectedInterval = setInterval(function() {
+      $('#timerBar').css("height", "-=3");
+    },100);
+
+    // After a delay of 10 seconds (10000 milliseconds)...
+    setTimeout(function(){
+      // Set the following booleans to false to say the player didn't collect any protection equipment yet
+      gotGlove = false;
+      gotMask = false;
+      gotOverall = false;
+      playerProtected = false;
+      // Clear the interval that reduces the height of the timer bar
+      clearInterval(playerProtectedInterval);
+      // Change the player image to the regular one
+      $('#player').css("background", "url(../assets/images/player.png)");
+      // Set the opacity of the timer bar back to 0
+      $('#timerBar').css("opacity", "0");
+      // Set the height of the timer bar back to 300 pixels
+      $('#timerBar').css("height", "300px");
+      // Add a keypress event handler that checks if the player is ready to get protection
+      $(document).keypress(checkProtection);
+    },10000);
+  }
+}
+
 // playerDead()
 //
 // When the player is infected, clear the interval that updates the progressbar,
@@ -707,6 +728,7 @@ function playerDead() {
   // Hide the player and its perimeter ellipses
   $('#playerPerimeter').hide();
   $('#perimeter').hide();
+  playerIsDead = true;
   // Open a dialog box saying the player is infected
   playerInfectedDialog();
 }
@@ -768,6 +790,7 @@ function goHomeDialog() {
 // Changes text and some options of the gameover dialog and displays the new dialog telling the player how many paper rolls he collected.
 // After 2 seconds, displays a thousand paper rolls in the body
 function atLeastDialog() {
+  $('.sanitizerPerimeter').remove();
   // Hide the progressbar, score and the box with the items to collect for protection
   $('#progressbar').hide();
   $('#scoreBox').hide();
@@ -797,8 +820,8 @@ function atLeastDialog() {
       click: function() {
         // Destroy this dialog
         $('#gameoverDialog').dialog("destroy");
-        // And run the documentReady() function
-        documentReady();
+        // And run the startGame() function
+        startGame();
       }
     }],
   });

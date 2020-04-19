@@ -18,6 +18,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   /* border-style: solid; */
   z-index: -1;
+  background: url('../assets/images/titlePage.png') no-repeat;
 }
 
 #progressbar {
@@ -46,6 +47,7 @@ body {
   align-items: center;
   text-align: center;
   margin: 0px 0px;
+  display: none;
 }
 
 #score {
@@ -65,6 +67,7 @@ body {
   /* padding: 5px 2px; */
   color: grey;
   border-style: solid;
+  display: none;
 }
 
 .protectionCollected {
@@ -98,6 +101,7 @@ body {
   color: red;
   left: 50%;
   top: 50%;
+  display: none;
 }
 
 #perimeter {
@@ -109,6 +113,7 @@ body {
   width: 400px;
   height: 400px;
   z-index: -1;
+  display: none;
 }
 
 #player {
@@ -211,7 +216,7 @@ body {
   margin: 0px 0px;
   width: 132px;
   height: 132px;
-  /* border-style: solid; */
+  border-style: solid;
 }
 
 .character {
@@ -221,7 +226,7 @@ body {
   margin: 0px 0px;
   width: 132px;
   height: 132px;
-  /* border-style: solid; */
+  border-style: solid;
   background-position: 0px 0px;
   transform-origin: 50% 50%;
 }
