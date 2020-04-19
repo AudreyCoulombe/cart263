@@ -53,11 +53,48 @@ body {
   margin: 0px 0px;
 }
 
+#collectedProtection {
+  width: 110px;
+  height:300px;
+  align-items: center;
+  background-color: white;
+  position: fixed;
+  font-size: 15px;
+  top: 150px;
+  left: 10px;
+  /* padding: 5px 2px; */
+  color: grey;
+  border-style: solid;
+}
+
+.protectionCollected {
+  opacity: 0.25;
+}
+/* Div child of #collected Protection that will become green when the player becomes protected and the height will change according to the timer */
+#timerBar {
+  width: 110px;
+  height:300px;
+  background-color: green;
+  opacity: 0;
+  position: fixed;
+  font-size: 15px;
+  top: 150px;
+  left: 10px;
+  border-style: solid;
+  color:white;
+  font-size: 25px;
+  text-align: center;
+  vertical-align: middle;
+  /* padding-top: 50px; */
+  /* padding: 0px 0px;
+  margin: 0px 0px; */
+}
+
 #playerPerimeter {
   position: relative;
   width: 132px;
   height: 132px;
-  border-style: solid;
+  /* border-style: solid; */
   color: red;
   left: 50%;
   top: 50%;
@@ -78,10 +115,93 @@ body {
   position: absolute;
   width: 132px;
   height: 132px;
-  background: url('../assets/images/characters-01.png') no-repeat;
+  background: url('../assets/images/player.png') no-repeat;
   background-position: 0px 0px;
   /* border-style: solid; */
   transform: rotate(15deg);
+}
+
+.sanitizerPerimeter {
+  position: absolute;
+  display: block;
+  padding: 0px 0px;
+  margin: 0px 0px;
+  width: 84px;
+  height: 84px;
+  /* border-style: solid; */
+}
+
+.sanitizer {
+  display: block;
+  position: absolute;
+  padding: 0px 0px;
+  margin: 0px 0px;
+  width: 84px;
+  height: 84px;
+  /* border-style: solid; */
+  background: url('../assets/images/handSanitizer.png') no-repeat;
+  background-position: 0px 0px;
+  transform-origin: 50% 50%;
+}
+
+.maskPerimeter {
+  position: absolute;
+  display: block;
+  padding: 0px 0px;
+  margin: 0px 0px;
+  width:82px;
+  height:50px;
+}
+
+.mask {
+  position: absolute;
+  display: block;
+  padding: 0px 0px;
+  margin: 0px 0px;
+  width:82px;
+  height:50px;
+  background: url('../assets/images/mask.png') no-repeat;
+  background-position: 0px 0px;
+}
+
+.overallPerimeter {
+  width:106px;
+  height:91px;
+  position: absolute;
+  display: block;
+  padding: 0px 0px;
+  margin: 0px 0px;
+}
+
+.overall {
+  position: absolute;
+  display: block;
+  padding: 0px 0px;
+  margin: 0px 0px;
+  width:106px;
+  height:91px;
+  background: url('../assets/images/overall.png') no-repeat;
+  background-position: 0px 0px;
+}
+
+.glovePerimeter {
+  position: absolute;
+  display: block;
+  padding: 0px 0px;
+  margin: 0px 0px;
+  width:39px;
+  height:72px;
+}
+
+.glove {
+  display: block;
+  position: absolute;
+  padding: 0px 0px;
+  margin: 0px 0px;
+  width:39px;
+  height:72px;
+  background: url('../assets/images/glove.png') no-repeat;
+  background-position: 0px 0px;
 }
 
 .characterPerimeter {
@@ -91,7 +211,7 @@ body {
   margin: 0px 0px;
   width: 132px;
   height: 132px;
-  border-style: solid;
+  /* border-style: solid; */
 }
 
 .character {

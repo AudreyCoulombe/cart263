@@ -15,6 +15,9 @@ Used the following link as a reference for the walk pattern: https://digipiph.co
 //
 // Initial states of the game
 let playerMoving = false;
+let gotMask = false;
+let gotGlove = false;
+let gotOverall = false;
 // Position variables
 let playerPosition; // Note to myself: I can access playerPosition.left and playerPosition.top
 let mousePosition = {
@@ -32,7 +35,6 @@ let playerVelocityX;
 let playerVelocityY;
 // Number of characters other than the player and number of toilet paper rolls
 let numberOfCharacters = 6;
-// let numberOfCharacters = 8;
 let numberOfPaperRoll = 8;
 // Variable that contains the player character div
 let $playerCharacter;
@@ -63,6 +65,14 @@ function documentReady() {
   score = 0;
   // Make the player standing by setting its walk frame to 1
   playerWalkFrame = 1;
+  // Set the following booleans to false to say the player didn't collect any protection equipment yet
+  gotMask = false;
+  gotGlove = false;
+  gotOverall = false;
+  // Make the protection images transparent to say the player didn't pick it up yet
+  $('.protectionCollected').css("opacity", "0.25");
+  // Show the div that displays the protection items to collect (hidden when the player is infected)
+  $('#collectedProtection').show();
   // Display the initial score in the paragraph with the id "score"
   $('#score').html(score);
   // Show the score and the progressbar (hidden when the player is infected)
@@ -92,12 +102,16 @@ function documentReady() {
   $('#gameoverDialog').hide();
   // Hide the paper rolls that are displayed when the player is infected
   $('.paperRollPerimeter').remove();
+  // Check if a key is pressed and if so, runs the checkProtection() function
+  $(document).keypress(checkProtection);
   // Display and update the progressbar each 60 milliseconds and store the interval in a variable
   progressbarInterval = setInterval(displayProgressbar, 60);
   // Display the characters other than the player randomly in the body
   displayCharacters();
   // Display the toilet paper rolls randomly in the body
   displayPaperRolls();
+  // Display the hand sanitizer randomly in the body after a delay of 8 seconds
+  displaySanitizer();
   // Move all charcters other than the player and change the velocity each 2 seconds
   moveCharacters();
   // After a delay of 2 seconds (2000 milliseconds)...
@@ -160,24 +174,35 @@ function displayProgressbar() {
 
 // checkPlayerCollision()
 //
-// Uses .collision() function (from jquery-collision extension) to check if the player touches a character.
-// If so, animes the player with the "explode" effect...
+// Uses .collision() function (from jquery-collision extension) to check if the player touches a character, a paper roll, a sanitizer, glove, mask or overall.
 function checkPlayerCollision() {
   // When the player touches a character, store the character object in an "array", in a variable
   let touchedCharacter = $($playerCharacter).collision('.characterPerimeter'); // function from the library extension "jquery-collision"
   // When the player touches a paper roll, store the paper roll object in an "array", in a variable
   let touchedPaperRoll = $($playerCharacter).collision('.paperRollPerimeter');
+  // When the player touches a hand sanitizer, store it in an "array", in a variable
+  let touchedSanitizer = $($playerCharacter).collision('.sanitizerPerimeter');
+  // When the player touches a glove, store it in an "array", in a variable
+  let touchedGlove = $($playerCharacter).collision('.glovePerimeter');
+  // When the player touches a mask, store it in an "array", in a variable
+  let touchedMask = $($playerCharacter).collision('.maskPerimeter');
+  // When the player touches an overall, store it in an "array", in a variable
+  let touchedOverall = $($playerCharacter).collision('.overallPerimeter');
+
   // If the "array" with the touched character contains more than 0 object...
   if (touchedCharacter.length > 0) {
-    // Anime the player with the "explode" effect and when the animation is done...
-    $playerCharacter.effect("explode", "linear", 400, function() {
-      // Stop the animation effect
-      $playerCharacter.stop(true, true);
-      // Show the player character
-      $playerCharacter.show();
-      contactWithVirus += 20;
-    });
+    if (gotGlove === false || gotMask === false || gotOverall === false) {
+      // Anime the player with the "explode" effect and when the animation is done...
+      // $playerCharacter.effect("explode", "linear", 400, function() {
+      //   // Stop the animation effect
+      //   $playerCharacter.stop(true, true);
+      //   // Show the player character
+      //   $playerCharacter.show();
+      // });
+      contactWithVirus += 10;
+    }
   }
+
   // If the "array" with the touched toilet paper rolls contains more than 0 object...
   if (touchedPaperRoll.length > 0) {
     // Add 1 to the score
@@ -186,9 +211,98 @@ function checkPlayerCollision() {
     displayElement($(touchedPaperRoll[0]));
     // Display the new score
     $('#score').html(score);
+    // Display protection equipment according to the score
+    displayProtection();
+  }
+
+  // If the "array" with the touched hand sanitizer contains more than 0 object...
+  if (touchedSanitizer.length > 0) {
+    // Remove the sanitizer
+    $('.sanitizerPerimeter').remove();
+    // After a delay of 8 seconds, display another sanitizer randomly in the body
+    displaySanitizer();
+    // Lower the level of contact with the virus
+    contactWithVirus -= 20;
+  }
+
+  // If the "array" with the touched glove contains more than 0 object...
+  if (touchedGlove.length > 0) {
+    // Set the gotGlove state to true;
+    gotGlove = true;
+    // Remove the glove
+    $('.glovePerimeter').remove();
+    // Change the opacity of the glove image in the protection items box
+    $('#protectionGlove').css("opacity", "1");
+  }
+
+  // If the "array" with the touched mask contains more than 0 object...
+  if (touchedMask.length > 0) {
+    // Set the gotMask state to true;
+    gotMask = true;
+    // Remove the mask
+    $('.maskPerimeter').remove();
+    // Change the opacity of the mask image in the protection items box
+    $('#protectionMask').css("opacity", "1");
+  }
+
+  // If the "array" with the touched overall contains more than 0 object...
+  if (touchedOverall.length > 0) {
+    // Set the gotOverall state to true;
+    gotOverall = true;
+    // Remove the overall
+    $('.overallPerimeter').remove();
+    // Change the opacity of the overall image in the protection items box
+    $('#protectionOverall').css("opacity", "1");
+  }
+
+  // If the player collected the glove, the mask and the overall...
+  if (gotGlove ===true && gotMask === true && gotOverall === true) {
+    // Set the timer bar (green div) opacity to 0.8
+    $('#timerBar').css("opacity", "0.8");
+    // Write text in the timer bar to tell the player he has to press a key
+    $('#timerBar').html("Press any key for protection");
+    $('.protectionCollected').css("opacity", "0.25");
   }
 }
 
+// checkProtection()
+//
+//
+function checkProtection() {
+  // If the player collected the glove, the mask and the overall...
+  if (gotGlove ===true && gotMask === true && gotOverall === true) {
+    // Remove the keypress event handler
+    $(document).off( "keypress" );
+    // Remove the text in the timer bar
+    $('#timerBar').html("");
+    // Set the opacity of the protection equipment collected back to 0.25
+    $('.protectionCollected').css("opacity", "0.25");
+    // Change the image of the player for an image of the player with protection
+    $('#player').css("background", "url(../assets/images/playerProtected.png)");
+    // Each 100 milliseconds, reduce the height of the timer bar by 3 pixels and store the interval in a variable
+    let playerProtectedInterval = setInterval(function() {
+      $('#timerBar').css("height", "-=3");
+    },100);
+
+    // After a delay of 10 seconds (10000 milliseconds)...
+    setTimeout(function(){
+      // Set the following booleans to false to say the player didn't collect any protection equipment yet
+      gotGlove = false;
+      gotMask = false;
+      gotOverall = false;
+      // Clear the interval that reduces the height of the timer bar
+      clearInterval(playerProtectedInterval);
+      // Change the player image to the regular one
+      $('#player').css("background", "url(../assets/images/player.png)");
+      // Set the opacity of the timer bar back to 0
+      $('#timerBar').css("opacity", "0");
+      // Set the height of the timer bar back to 300 pixels
+      $('#timerBar').css("height", "300px");
+      // Add a keypress event handler that checks if the player is ready to get protection
+      $(document).keypress(checkProtection);
+    },10000);
+  }
+}
 // displayCharacters()
 //
 // For each character, creates a new div, displays it randomly, adds the class "character",
@@ -259,15 +373,98 @@ function displayPaperRolls() {
     displayElement($paperRollPerimeter);
   }
 }
+
+function displaySanitizer() {
+  // After a delay of 8 seconds...
+  setTimeout(function() {
+    // Create div that contains the sanitizer and store it in a variable
+    let $sanitizerPerimeter = $("<div></div>");
+    // Create div that contains the sanitizer image and store it in a variable
+    let $sanitizerImg = $("<div></div>");
+    // Add the class "sanitizerPerimeter" to the div that contains the sanitizer
+    $sanitizerPerimeter.addClass("sanitizerPerimeter");
+    // Add the class "sanitizer" to the div with the image and append it to the div that contains the sanitizer (had issues to get accurate distance with rotated div, so $sanitizerImg rotates and $sanitizerPerimeter is used to check collision)
+    $sanitizerImg.addClass("sanitizer").appendTo($sanitizerPerimeter);
+    // Set a random position and rotation angle for the div that contains the sanitizer and display it in the body
+    displayElement($sanitizerPerimeter);
+  },8000);
+}
+
+// displayProtection()
+//
+// Each time the player makes 5 points, display either the glove, the mask, or the overall.
+// In a for loop, calculates for each protection item the scores you need to get to diplay it and push it in an array.
+// For the 3 scores arrays, checks if it includes the actual score and if so, create 2 divs for the item perimeter and the item image and display it randomly.
+function displayProtection() {
+  // Variables for the arrays that will contain the scores you need to have to get the protection equipment
+  let gloveScores = [];
+  let maskScores = [];
+  let overallScores = [];
+  // Variables for the score you need to have to get the protection equipment. Here the value corresponds to the score you need to have to get the item for the first time.
+  let scoreForGlove = 5;
+  let scoreForMask = 10;
+  let scoreForOverall = 15;
+  // Run the following loop 500 times
+  for (let i = 0; i<500; i++) {
+    // Add the score for glove, mask and overall to their respective arrays
+    gloveScores.push(scoreForGlove);
+    maskScores.push(scoreForMask);
+    overallScores.push(scoreForOverall);
+    // Add 15 to the score for the glove, mask and overall
+    scoreForGlove += 15;
+    scoreForMask += 15;
+    scoreForOverall += 15;
+  }
+  // If the actual score is in the gloveScores array...
+  if (gloveScores.includes(score)){
+    // Create a div that contains the glove and store it in a variable
+    let $glovePerimeter = $("<div></div>");
+    // Create div that contains the glove image and store it in a variable
+    let $gloveImg = $("<div></div>");
+    // Add the class "glovePerimeter" to the div that contains the glove
+    $glovePerimeter.addClass("glovePerimeter protection");
+    // Add the class "glove" to the div with the image and append it to $glovePerimeter (had issues to get accurate distance with rotated div, so $glove rotates and $glovePerimeter is used to check collision)
+    $gloveImg.addClass("glove").appendTo($glovePerimeter);
+    // Set a random position for the div $glovePerimeter and rotation angle for $gloveImg
+    displayElement($glovePerimeter);
+  }
+  // If the actual score is in the maskScores array...
+  else if (maskScores.includes(score)){
+    // Create a div that contains the mask and store it in a variable
+    let $maskPerimeter = $("<div></div>");
+    // Create div that contains the mask image and store it in a variable
+    let $maskImg = $("<div></div>");
+    // Add the class "maskPerimeter" to the div that contains the mask
+    $maskPerimeter.addClass("maskPerimeter protection");
+    // Add the class "mask" to the div with the image and append it to $maskPerimeter (had issues to get accurate distance with rotated div, so $mask rotates and $maskPerimeter is used to check collision)
+    $maskImg.addClass("mask").appendTo($maskPerimeter);
+    // Set a random position for the div $maskPerimeter and rotation angle for $maskImg
+    displayElement($maskPerimeter);
+  }
+  // If the actual score is in the overallScores array...
+  else if (overallScores.includes(score)){
+    // Create a div that contains the overall and store it in a variable
+    let $overallPerimeter = $("<div></div>");
+    // Create div that contains the overall image and store it in a variable
+    let $overallImg = $("<div></div>");
+    // Add the class "glovePerimeter" to the div that contains the glove
+    $overallPerimeter.addClass("overallPerimeter protection");
+    // Add the class "overall" to the div with the image and append it to $overallPerimeter (had issues to get accurate distance with rotated div, so $overall rotates and $overallPerimeter is used to check collision)
+    $overallImg.addClass("overall").appendTo($overallPerimeter);
+    // Set a random position for the div $overallPerimeter and rotation angle for $overallImg
+    displayElement($overallPerimeter);
+  }
+}
+
 // displayElement()
 //
 // Gets a random number for the position and rotation angle and displays elements randomly in the body
 // Function used to display the characters other than the player and for toilet paper rolls
 function displayElement($elementPerimeter) {
   // Get a random number between 0 and the width of the body for the left position
-  let leftPosition = Math.random() * $('body').width();
+  let leftPosition = Math.random() * $('body').width() - $elementPerimeter.width();
   // Get a random number between 0 and de height of the body for the top position
-  let topPosition = Math.random() * $('body').height();
+  let topPosition = Math.random() * $('body').height() - $elementPerimeter.height();
   // Set the position of the div to the random one we just created
   $elementPerimeter.offset({
     top: topPosition,
@@ -289,7 +486,7 @@ function displayElement($elementPerimeter) {
 // Makes the character go to the opposite direction when it touches another one
 // and makes the character walk, move and rotate at the walkingSpeed
 function moveCharacters() {
-  // For each character...
+  // For each character, run the following function...
   $('.characterPerimeter').each(function(index) {
     // Set the maximum and minimum velocity
     let maxVelocity = 20;
@@ -316,6 +513,7 @@ function moveCharacters() {
         characterVelocityY = Math.random() * (maxVelocity - minVelocity) + minVelocity;
       }
     }, 2000);
+
     // Create an interval that makes the character walk and move at the walkingSpeed
     setInterval(function() {
       // Add 1 to the current walk frame
@@ -346,6 +544,7 @@ function moveCharacters() {
       walk($character, characterVelocityX, characterVelocityY, characterWalkFrame);
       // When the character goes out the body, make it wrap
       handleWrapping($character);
+      characterCollect($character);
     }, walkingSpeed);
   });
 }
@@ -387,6 +586,20 @@ function handleWrapping(wrappingCharacter) {
       top: 0
     });
   }
+}
+
+// characterCollect()
+//
+// Checks if the collecting character touches a paper roll.
+// If so, display the paper roll randomly in the page.
+function characterCollect($collectingCharacter) {
+    // When the character touches another character, store the other character object in an "array", in a variable
+    let touchedPaperRoll = $($collectingCharacter).collision('.paperRollPerimeter');
+    // If the "array" with the touched character contains more than 0 object...
+    if (touchedPaperRoll.length > 0) {
+      // And change its position and roatation angle to a random one
+      displayElement($(touchedPaperRoll[0]));
+    }
 }
 
 // mousePlayerPosition()
@@ -486,9 +699,11 @@ function playerDead() {
   clearInterval(playerWalkInterval);
   // Stop the interval that checks the distance between mouse and player
   clearInterval(mousePlayerInterval);
-  // Remove all the characters and the paper rolls
+  // Remove all the characters, paper rolls the protection equipment and the sanitizer
   $('.characterPerimeter').remove();
   $('.paperRollPerimeter').remove();
+  $('.protection').remove();
+  $('.sanitizerPerimeter').remove();
   // Hide the player and its perimeter ellipses
   $('#playerPerimeter').hide();
   $('#perimeter').hide();
@@ -553,9 +768,10 @@ function goHomeDialog() {
 // Changes text and some options of the gameover dialog and displays the new dialog telling the player how many paper rolls he collected.
 // After 2 seconds, displays a thousand paper rolls in the body
 function atLeastDialog() {
-  // Hide the progressbar and the score
+  // Hide the progressbar, score and the box with the items to collect for protection
   $('#progressbar').hide();
   $('#scoreBox').hide();
+  $('#collectedProtection').hide();
   // Change the background image of the body to an image of the player at home
   $('body').css('background-image', 'url(../assets/images/playerHome.png)');
   // Change the text in the div with the id "gameoverDialog"
