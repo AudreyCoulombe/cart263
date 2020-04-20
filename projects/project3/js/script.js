@@ -99,7 +99,7 @@ function setup() {
 // Changes the body's background image and add a click event handler
 function instructionPage() {
   // Change the background image of the body to the image with instructions
-  $('body').css('background-image', 'url(../assets/images/instructionPage.png)');
+  $('body').css('background-image', 'url(assets/images/instructionPage.png)');
   // When we click on the document, run the startGame function
   $(document).click(startGame);
 }
