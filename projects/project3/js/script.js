@@ -10,6 +10,7 @@ A game where you have to avoid contact with other people in order to survive (no
 Used the following link as a reference for the walk pattern: https://digipiph.com/blog/creating-sprite-character-movement-javascript-and-jquery-ver-10
 ******************/
 
+
 // Global variables
 //
 // Initial states of the game
