@@ -99,7 +99,7 @@ function setup() {
 // Changes the body's background image and add a click event handler
 function instructionPage() {
   // Change the background image of the body to the image with instructions
-  $('body').css('background-image', 'url(../assets/images/instructionPage.png)');
+  $('body').css('background-image', 'url(assets/images/instructionPage.png)');
   // When we click on the document, run the startGame function
   $(document).click(startGame);
 }
@@ -150,7 +150,7 @@ function startGame() {
   // Show the perimeter circles on screen
   $('#perimeter').show();
   // Change the background image of the body to an image of the gound
-  $('body').css('background-image', 'url(../assets/images/ground.png)');
+  $('body').css('background-image', 'url(assets/images/ground.png)');
   // Hide the dialog box (shown when the player is infected/dead)
   $('#gameoverDialog').hide();
   // Delete the paper rolls that are animated at the end of the game (if there are any)
@@ -213,7 +213,7 @@ function displayCharacters() {
     // Set a random position for the character perimeter div and a random rotation angle for the image and display the character in the body
     displayElement($characterPerimeter);
     // Set the background image to the character number we are at
-    $characterImg.css('background-image', 'url(../assets/images/characters-0' + i + '.png)');
+    $characterImg.css('background-image', 'url(assets/images/characters-0' + i + '.png)');
   }
   // Once all the characters are set, for each one...
   $('.characterPerimeter').each(function() {
@@ -687,7 +687,7 @@ function checkProtection() {
     // Set the opacity of the protection equipment collected back to 0.25
     $('.protectionCollected').css("opacity", "0.25");
     // Change the image of the player for an image of the player with protection
-    $('#player').css("background", "url(../assets/images/playerProtected.png)");
+    $('#player').css("background", "url(assets/images/playerProtected.png)");
     // Each 100 milliseconds, reduce the height of the timer bar by 3 pixels and store the interval in a variable
     let playerProtectedInterval = setInterval(function() {
       $('#timerBar').css("height", "-=3");
@@ -704,7 +704,7 @@ function checkProtection() {
       // Clear the interval that reduces the height of the timer bar
       clearInterval(playerProtectedInterval);
       // Change the player image to the regular one
-      $('#player').css("background", "url(../assets/images/player.png)");
+      $('#player').css("background", "url(assets/images/player.png)");
       // Set the opacity of the timer bar back to 0
       $('#timerBar').css("opacity", "0");
       // Set the height of the timer bar back to 300 pixels
@@ -810,7 +810,7 @@ function atLeastDialog() {
   $('#scoreBox').hide();
   $('#collectedProtection').hide();
   // Change the background image of the body to an image of the player at home
-  $('body').css('background-image', 'url(../assets/images/playerHome.png)');
+  $('body').css('background-image', 'url(assets/images/playerHome.png)');
   // Change the text in the div with the id "gameoverDialog"
   $('#gameoverDialog').html("What a shitty situation! At least you collected " + score + " rolls of toilet paper!");
   // Set the variable to an image tag with the path of the pile of poo image
