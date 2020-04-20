@@ -9,14 +9,11 @@ body {
   padding: 0;
   margin: 0;
   width: 1400px;
-  /* width: 400px; */
   height: 800px;
-  /* height: 400px; */
   background-color: yellow;
   background-size: 800px 1400px;
   background: no-repeat;
   font-family: Arial, Helvetica, sans-serif;
-  /* border-style: solid; */
   z-index: -1;
   background: url('../assets/images/titlePage.png') no-repeat;
 }
@@ -57,14 +54,13 @@ body {
 
 #collectedProtection {
   width: 110px;
-  height:300px;
+  height: 300px;
   align-items: center;
   background-color: white;
   position: fixed;
   font-size: 15px;
   top: 150px;
   left: 10px;
-  /* padding: 5px 2px; */
   color: grey;
   border-style: solid;
   display: none;
@@ -73,10 +69,11 @@ body {
 .protectionCollected {
   opacity: 0.25;
 }
+
 /* Div child of #collected Protection that will become green when the player becomes protected and the height will change according to the timer */
 #timerBar {
   width: 110px;
-  height:300px;
+  height: 300px;
   background-color: green;
   opacity: 0;
   position: fixed;
@@ -84,20 +81,16 @@ body {
   top: 150px;
   left: 10px;
   border-style: solid;
-  color:white;
+  color: white;
   font-size: 25px;
   text-align: center;
   vertical-align: middle;
-  /* padding-top: 50px; */
-  /* padding: 0px 0px;
-  margin: 0px 0px; */
 }
 
 #playerPerimeter {
   position: relative;
   width: 132px;
   height: 132px;
-  /* border-style: solid; */
   color: red;
   left: 50%;
   top: 50%;
@@ -108,8 +101,6 @@ body {
   width: auto;
   height: auto;
   position: absolute;
-  /* color:yellow; */
-  /* border-style: solid; */
   width: 400px;
   height: 400px;
   z-index: -1;
@@ -122,7 +113,6 @@ body {
   height: 132px;
   background: url('../assets/images/player.png') no-repeat;
   background-position: 0px 0px;
-  /* border-style: solid; */
   transform: rotate(15deg);
 }
 
@@ -133,7 +123,6 @@ body {
   margin: 0px 0px;
   width: 84px;
   height: 84px;
-  /* border-style: solid; */
 }
 
 .sanitizer {
@@ -143,7 +132,6 @@ body {
   margin: 0px 0px;
   width: 84px;
   height: 84px;
-  /* border-style: solid; */
   background: url('../assets/images/handSanitizer.png') no-repeat;
   background-position: 0px 0px;
   transform-origin: 50% 50%;
@@ -154,8 +142,8 @@ body {
   display: block;
   padding: 0px 0px;
   margin: 0px 0px;
-  width:82px;
-  height:50px;
+  width: 82px;
+  height: 50px;
 }
 
 .mask {
@@ -163,15 +151,15 @@ body {
   display: block;
   padding: 0px 0px;
   margin: 0px 0px;
-  width:82px;
-  height:50px;
+  width: 82px;
+  height: 50px;
   background: url('../assets/images/mask.png') no-repeat;
   background-position: 0px 0px;
 }
 
 .overallPerimeter {
-  width:106px;
-  height:91px;
+  width: 106px;
+  height: 91px;
   position: absolute;
   display: block;
   padding: 0px 0px;
@@ -183,8 +171,8 @@ body {
   display: block;
   padding: 0px 0px;
   margin: 0px 0px;
-  width:106px;
-  height:91px;
+  width: 106px;
+  height: 91px;
   background: url('../assets/images/overall.png') no-repeat;
   background-position: 0px 0px;
 }
@@ -194,8 +182,8 @@ body {
   display: block;
   padding: 0px 0px;
   margin: 0px 0px;
-  width:39px;
-  height:72px;
+  width: 39px;
+  height: 72px;
 }
 
 .glove {
@@ -203,8 +191,8 @@ body {
   position: absolute;
   padding: 0px 0px;
   margin: 0px 0px;
-  width:39px;
-  height:72px;
+  width: 39px;
+  height: 72px;
   background: url('../assets/images/glove.png') no-repeat;
   background-position: 0px 0px;
 }
@@ -216,7 +204,6 @@ body {
   margin: 0px 0px;
   width: 132px;
   height: 132px;
-  border-style: solid;
 }
 
 .character {
@@ -226,7 +213,6 @@ body {
   margin: 0px 0px;
   width: 132px;
   height: 132px;
-  border-style: solid;
   background-position: 0px 0px;
   transform-origin: 50% 50%;
 }
@@ -235,7 +221,6 @@ body {
   position: absolute;
   width: 59px;
   height: 78px;
-  /* border-style: solid; */
 }
 
 .paperRoll {
@@ -244,7 +229,6 @@ body {
   height: 78px;
   background: url('../assets/images/toiletPaperRoll.png') no-repeat;
   background-position: 0px 0px;
-  /* border-style: solid; */
 }
 
 /* Dialog box: */

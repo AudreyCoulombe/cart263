@@ -55,7 +55,7 @@ let $pooImage;
 let finalPaperRolls = 1000;
 
 // When the page is ready...
-$(document).ready(function () {
+$(document).ready(function() {
   // Add an event handler on the page that runs the instructionPage function when we click
   $(document).click(instructionPage);
 });
@@ -94,16 +94,20 @@ function setup() {
 }
 
 // instructionPage()
-// 
+//
+// Changes the body's background image and add a click event handler
 function instructionPage() {
   // Change the background image of the body to the image with instructions
   $('body').css('background-image', 'url(../assets/images/instructionPage.png)');
+  // When we click on the document, run the startGame function
   $(document).click(startGame);
 }
 
 // startGame()
 //
-//
+// Establishes the initial settings of the game,
+// Calls functions to display the characters, the paper rolls, the sanitizer and to move characters
+// Sets intervals to display the progressbar, check the player collision, move player and check its distance with the mouse
 function startGame() {
   // Set the number of contact with virus and the initial score to 0
   contactWithVirus = 0;
@@ -115,10 +119,11 @@ function startGame() {
   gotGlove = false;
   gotOverall = false;
   playerProtected = false;
+  // Set the player is dead variable to false
   playerIsDead = false;
   // Make the protection images transparent to say the player didn't pick it up yet
   $('.protectionCollected').css("opacity", "0.25");
-  // Show the div that displays the protection items to collect (hidden when the player is infected)
+  // Show the div that displays the protection items to collect
   $('#collectedProtection').show();
   // Display the initial score in the paragraph with the id "score"
   $('#score').html(score);
@@ -147,14 +152,12 @@ function startGame() {
   $('body').css('background-image', 'url(../assets/images/ground.png)');
   // Hide the dialog box (shown when the player is infected/dead)
   $('#gameoverDialog').hide();
-  // Hide the paper rolls that are displayed when the player is infected
+  // Delete the paper rolls that are animated at the end of the game (if there are any)
   $('.paperRollPerimeter').remove();
+  // Remove the click event handler from the document
+  $(document).off("click");
   // Check if a key is pressed and if so, runs the checkProtection() function
   $(document).keypress(checkProtection);
-
-  $(document).off( "click" );
-  // Display and update the progressbar each 60 milliseconds and store the interval in a variable
-  progressbarInterval = setInterval(displayProgressbar, 60);
   // Display the characters other than the player randomly in the body
   displayCharacters();
   // Display the toilet paper rolls randomly in the body
@@ -163,6 +166,8 @@ function startGame() {
   displaySanitizer();
   // Move all charcters other than the player and change the velocity each 2 seconds
   moveCharacters();
+  // Display and update the progressbar each 60 milliseconds and store the interval in a variable
+  progressbarInterval = setInterval(displayProgressbar, 60);
   // After a delay of 2 seconds (2000 milliseconds)...
   setTimeout(function() {
     // Check if the player touched something each 120 milliseconds
@@ -176,8 +181,8 @@ function startGame() {
 
 // displayProgressbar()
 //
-// Displays and updates the progressbar according to the number of times the player touched another character. (The progressbar represent the level of "infection", once it is complete the player is "infected" and the game is over)
-// Runs the playerDead() function when the progressbar is complete
+// Displays and updates the progressbar according to the number of times the player touched another character (or the player's "level of infection").
+// Runs the playerDead() function when the progressbar is complete.
 function displayProgressbar() {
   // Display the div with the id "progressbar" as a progressbar...
   $("#progressbar").progressbar({
@@ -190,9 +195,9 @@ function displayProgressbar() {
 
 // displayCharacters()
 //
-// For each character, creates a new div, displays it randomly, adds the class "character",
-// sets the background image as the character image and checks if it overlays another character.
-// If so, displays that character randomly again until it overlays no other character
+// For each character, creates a new div and appends a child to it with the character image.
+// Displays the character randomly and checks if it overlays another character.
+// If so, displays that character randomly again until it overlays no other character.
 function displayCharacters() {
   // For each character...
   for (let i = 1; i < numberOfCharacters + 1; i++) {
@@ -204,7 +209,7 @@ function displayCharacters() {
     $characterPerimeter.addClass("characterPerimeter");
     // Add the class "character" to the div with the character image and append it to the div that contains the character (had issues to get accurate distance with rotated div, so $characterImg rotates and $characterPerimeter is used to check collision)
     $characterImg.addClass("character").appendTo($characterPerimeter);
-    // Set a random position and rotation angle for the div that contains the character and display it in the body
+    // Set a random position for the character perimeter div and a random rotation angle for the image and display the character in the body
     displayElement($characterPerimeter);
     // Set the background image to the character number we are at
     $characterImg.css('background-image', 'url(../assets/images/characters-0' + i + '.png)');
@@ -242,23 +247,28 @@ function checkOverlay($actualCharacter, $others) {
 
 // displayPaperRolls()
 //
-// For each paper roll, creates a new div, displays it randomly and adds the class "paperRoll"
+// For each paper roll, creates a new div and appends a child to it with the paper roll image.
+// Displays the paper roll randomly in the body.
 function displayPaperRolls() {
   // For each character...
   for (let i = 0; i < numberOfPaperRoll; i++) {
-    // Create div that contains the paper roll and store it in a variable
+    // Create a div that contains the paper roll and store it in a variable
     let $paperRollPerimeter = $("<div></div>");
-    // Create div that contains the paper roll image and store it in a variable
+    // Create a div that contains the paper roll image and store it in a variable
     let $paperRollImg = $("<div></div>");
     // Add the class "paperRollPerimeter" to the div that contains the paper roll
     $paperRollPerimeter.addClass("paperRollPerimeter");
     // Add the class "paperRoll" to the div with the image and append it to the div that contains the paperRoll (had issues to get accurate distance with rotated div, so $paperRollImg rotates and $paperRollPerimeter is used to check collision)
     $paperRollImg.addClass("paperRoll").appendTo($paperRollPerimeter);
-    // Set a random position and rotation angle for the div that contains the paper roll and display it in the body
+    // Set a random position for the paper roll perimeter div and a random rotation angle for the image and display the paper roll in the body
     displayElement($paperRollPerimeter);
   }
 }
 
+// displaySanitizer()
+//
+// After 8 seconds, creates a new div and appends a child to it with the sanitizer image.
+// Displays the sanitizer randomly in the body.
 function displaySanitizer() {
   // After a delay of 8 seconds...
   setTimeout(function() {
@@ -270,16 +280,16 @@ function displaySanitizer() {
     $sanitizerPerimeter.addClass("sanitizerPerimeter");
     // Add the class "sanitizer" to the div with the image and append it to the div that contains the sanitizer (had issues to get accurate distance with rotated div, so $sanitizerImg rotates and $sanitizerPerimeter is used to check collision)
     $sanitizerImg.addClass("sanitizer").appendTo($sanitizerPerimeter);
-    // Set a random position and rotation angle for the div that contains the sanitizer and display it in the body
+    // Set a random position for the sanitizer perimeter div and a random rotation angle for the image and display the sanitizer in the body
     displayElement($sanitizerPerimeter);
-  },8000);
+  }, 8000);
 }
 
 // displayProtection()
 //
 // Each time the player makes 5 points, display either the glove, the mask, or the overall.
 // In a for loop, calculates for each protection item the scores you need to get to diplay it and push it in an array.
-// For the 3 scores arrays, checks if it includes the actual score and if so, create 2 divs for the item perimeter and the item image and display it randomly.
+// For the 3 scores arrays, checks if it includes the actual score and if so, creates 2 divs for the item perimeter and the item image and display it randomly.
 function displayProtection() {
   // Variables for the arrays that will contain the scores you need to have to get the protection equipment
   let gloveScores = [];
@@ -290,7 +300,7 @@ function displayProtection() {
   let scoreForMask = 10;
   let scoreForOverall = 15;
   // Run the following loop 500 times
-  for (let i = 0; i<500; i++) {
+  for (let i = 0; i < 500; i++) {
     // Add the score for glove, mask and overall to their respective arrays
     gloveScores.push(scoreForGlove);
     maskScores.push(scoreForMask);
@@ -301,7 +311,7 @@ function displayProtection() {
     scoreForOverall += 15;
   }
   // If the actual score is in the gloveScores array...
-  if (gloveScores.includes(score)){
+  if (gloveScores.includes(score)) {
     // Create a div that contains the glove and store it in a variable
     let $glovePerimeter = $("<div></div>");
     // Create div that contains the glove image and store it in a variable
@@ -314,7 +324,7 @@ function displayProtection() {
     displayElement($glovePerimeter);
   }
   // If the actual score is in the maskScores array...
-  else if (maskScores.includes(score)){
+  else if (maskScores.includes(score)) {
     // Create a div that contains the mask and store it in a variable
     let $maskPerimeter = $("<div></div>");
     // Create div that contains the mask image and store it in a variable
@@ -327,7 +337,7 @@ function displayProtection() {
     displayElement($maskPerimeter);
   }
   // If the actual score is in the overallScores array...
-  else if (overallScores.includes(score)){
+  else if (overallScores.includes(score)) {
     // Create a div that contains the overall and store it in a variable
     let $overallPerimeter = $("<div></div>");
     // Create div that contains the overall image and store it in a variable
@@ -344,12 +354,12 @@ function displayProtection() {
 // displayElement()
 //
 // Gets a random number for the position and rotation angle and displays elements randomly in the body
-// Function used to display the characters other than the player and for toilet paper rolls
+// Function used to display the characters, the toilet paper rolls, the sanitizer and the protection equipment
 function displayElement($elementPerimeter) {
   // Get a random number between 0 and the width of the body for the left position
-  let leftPosition = Math.random() * $('body').width() - $elementPerimeter.width();
+  let leftPosition = Math.random() * $('body').width() - $elementPerimeter.width() / 2;
   // Get a random number between 0 and de height of the body for the top position
-  let topPosition = Math.random() * $('body').height() - $elementPerimeter.height();
+  let topPosition = Math.random() * $('body').height() - $elementPerimeter.height() / 2;
   // Set the position of the div to the random one we just created
   $elementPerimeter.offset({
     top: topPosition,
@@ -381,7 +391,7 @@ function moveCharacters() {
     let characterVelocityY;
     // Create a variable for the actual character
     let $character = $(this);
-    // Create a virable for the characters other than the actual one
+    // Create a varible for the characters other than the actual one
     let $otherCharacters = $('.characterPerimeter').not($character);
     // Set the current walk frame to 0
     let characterWalkFrame = 0;
@@ -419,7 +429,7 @@ function moveCharacters() {
           // Make the player go to the opposite direction by multiplying its velocity by -1
           characterVelocityX *= -1;
           characterVelocityY *= -1;
-          // After 100 * index miliseconds, set the running away state back to false
+          // After 500 * index miliseconds, set the running away state back to false
           setTimeout(function() {
             runningAway = false;
           }, index * 500); //(had to use the index in the delay or else the 2 characters would sometimes be stuck in a loop walking together and change velocity at the same time)
@@ -429,6 +439,7 @@ function moveCharacters() {
       walk($character, characterVelocityX, characterVelocityY, characterWalkFrame);
       // When the character goes out the body, make it wrap
       handleWrapping($character);
+      // Make the character collect the paper rolls
       characterCollect($character);
     }, walkingSpeed);
   });
@@ -475,15 +486,16 @@ function handleWrapping(wrappingCharacter) {
 
 // characterCollect()
 //
-// Checks if the collecting character touches a paper roll.
-// If so, display the paper roll randomly in the page.
+// When the player is not dead, checks if the collecting character touches a paper roll.
+// If so, displays the paper roll randomly in the page.
 function characterCollect($collectingCharacter) {
+  // If the player is not dead
   if (playerIsDead === false) {
     // When the character touches another character, store the other character object in an "array", in a variable
     let touchedPaperRoll = $($collectingCharacter).collision('.paperRollPerimeter');
     // If the "array" with the touched character contains more than 0 object...
     if (touchedPaperRoll.length > 0) {
-      // And change its position and roatation angle to a random one
+      // Change the position and roatation angle of the touched paper roll to a random one
       displayElement($(touchedPaperRoll[0]));
     }
   }
@@ -491,23 +503,20 @@ function characterCollect($collectingCharacter) {
 
 // mousePlayerPosition()
 //
-// Checks the mouse and player positions and sets the player moving state
+// Checks the mouse and player positions and sets the player velocity and moving state
 function mousePlayerPosition() {
   // Check the player position and store it in a variable (we can access playerPosition.left & playerPosition.top)
   playerPosition = $playerCharacter.offset();
-  // console.log("player left: " + playerPosition.left + ", player top: " + playerPosition.top);
   // Check the mouse position: when it moves, get the new position and store it in a variable
   $("body").mousemove(function(event) {
     mousePosition.left = event.pageX;
     mousePosition.top = event.pageY;
   });
-  // console.log("mouse left: " + mousePosition.left + ", mouse top: " + mousePosition.top);
   // Calculate the X & Y distance between the mouse and the center of the player
   let distanceX = mousePosition.left - playerPosition.left - $playerCharacter.width() / 2;
   let distanceY = mousePosition.top - playerPosition.top - $playerCharacter.height() / 2;
   // Use pythagorean theorem to calculate the distance between the mouse and the player
   let distance = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
-  // console.log("distance: " + distance + "distanceX: " + distanceX + "distanceY: " + distanceY);
   // Set velocity X & Y according to the distance X & Y
   playerVelocityX = distanceX / 10;
   playerVelocityY = distanceY / 10;
@@ -521,7 +530,7 @@ function mousePlayerPosition() {
   }
 }
 
-// walk()
+// movePlayer()
 //
 // Check if the player is moving and if so make the player walk, move and rotate
 function movePlayer() {
@@ -548,6 +557,7 @@ function movePlayer() {
 }
 
 // Walk()
+//
 // Animes the character's sprite sheet, moves the character and rotates it.
 // Function used for the player and the other characters
 function walk($walkingCharacter, velocityX, velocityY, currentWalkFrame) {
@@ -562,12 +572,12 @@ function walk($walkingCharacter, velocityX, velocityY, currentWalkFrame) {
   $walkingCharacter.children().css('background-position', walkPattern[currentWalkFrame]);
   // Set the character rotation angle according ti the X & Y velocity (in radians)
   let rotationAngle = Math.atan(velocityY / velocityX) + Math.PI / 2; // Math.PI/2 radians === 90 degrees
-  // If the distanceX is negative...
+  // If the x velocity is negative...
   if (velocityX < 0) {
     // Add pi randians to the rotation angle (180 degrees)
     rotationAngle += Math.PI;
   }
-  // And rotate the character image according to the rotation angle
+  // Rotate the character image according to the rotation angle
   $walkingCharacter.children().css({
     transform: 'rotate(' + rotationAngle + 'rad)'
   });
@@ -576,6 +586,7 @@ function walk($walkingCharacter, velocityX, velocityY, currentWalkFrame) {
 // checkPlayerCollision()
 //
 // Uses .collision() function (from jquery-collision extension) to check if the player touches a character, a paper roll, a sanitizer, glove, mask or overall.
+// If the player touches a character, increase the level of contact with the virus. If he touches a paper roll, change the score, display it randomly and check if it's time to display a protection item. If he touches the sanitizer, remove it, display a new one and decrease the level of contact with virus. If he touches a protection equipment, change the "got" state and make the image of it in the box opaque
 function checkPlayerCollision() {
   // When the player touches a character, store the character object in an "array", in a variable
   let touchedCharacter = $($playerCharacter).collision('.characterPerimeter'); // function from the library extension "jquery-collision"
@@ -593,13 +604,6 @@ function checkPlayerCollision() {
   // If the "array" with the touched character contains more than 0 object...
   if (touchedCharacter.length > 0) {
     if (playerProtected === false) {
-      // Anime the player with the "explode" effect and when the animation is done...
-      // $playerCharacter.effect("explode", "linear", 400, function() {
-      //   // Stop the animation effect
-      //   $playerCharacter.stop(true, true);
-      //   // Show the player character
-      //   $playerCharacter.show();
-      // });
       contactWithVirus += 10;
     }
   }
@@ -657,7 +661,7 @@ function checkPlayerCollision() {
   }
 
   // If the player collected the glove, the mask and the overall...
-  if (gotGlove ===true && gotMask === true && gotOverall === true) {
+  if (gotGlove === true && gotMask === true && gotOverall === true) {
     // Set the timer bar (green div) opacity to 0.8
     $('#timerBar').css("opacity", "0.8");
     // Write text in the timer bar to tell the player he has to press a key
@@ -668,13 +672,15 @@ function checkPlayerCollision() {
 
 // checkProtection()
 //
-//
+// Checks if the player collected the 3 protection items. If so, change the protection state to true, remove the the keypress event handler, change css of the box with the protection items, change the image of the player and decrease the height of the timer bar.
+// After 10 seconds, set the "got" booleans to false, give the player his initial image and set the timer bar style back to what it was.
 function checkProtection() {
   // If the player collected the glove, the mask and the overall...
-  if (gotGlove ===true && gotMask === true && gotOverall === true) {
+  if (gotGlove === true && gotMask === true && gotOverall === true) {
+    // Change the protection state to true
     playerProtected = true;
     // Remove the keypress event handler
-    $(document).off( "keypress" );
+    $(document).off("keypress");
     // Remove the text in the timer bar
     $('#timerBar').html("");
     // Set the opacity of the protection equipment collected back to 0.25
@@ -684,14 +690,15 @@ function checkProtection() {
     // Each 100 milliseconds, reduce the height of the timer bar by 3 pixels and store the interval in a variable
     let playerProtectedInterval = setInterval(function() {
       $('#timerBar').css("height", "-=3");
-    },100);
+    }, 100);
 
     // After a delay of 10 seconds (10000 milliseconds)...
-    setTimeout(function(){
+    setTimeout(function() {
       // Set the following booleans to false to say the player didn't collect any protection equipment yet
       gotGlove = false;
       gotMask = false;
       gotOverall = false;
+      // Set the protection state to false
       playerProtected = false;
       // Clear the interval that reduces the height of the timer bar
       clearInterval(playerProtectedInterval);
@@ -703,14 +710,15 @@ function checkProtection() {
       $('#timerBar').css("height", "300px");
       // Add a keypress event handler that checks if the player is ready to get protection
       $(document).keypress(checkProtection);
-    },10000);
+    }, 10000);
   }
 }
 
 // playerDead()
 //
-// When the player is infected, clear the interval that updates the progressbar,
-// remove the characters, paper rolls, hide the player and display a dialog box
+// When the player is infected, clear the intervals that updates the progressbar, that checks the player collisions, that makes the player walk and that checks his distance with mouse.
+// Remove the characters, paper rolls, sanitizer and protection equipment.
+// Hide the player and his perimeter ellipses, change the dead state to true and display a dialog box
 function playerDead() {
   // Stop the interval that updates the progressbar
   clearInterval(progressbarInterval);
@@ -725,9 +733,12 @@ function playerDead() {
   $('.paperRollPerimeter').remove();
   $('.protection').remove();
   $('.sanitizerPerimeter').remove();
+  // Remove the keypress event handler
+  $(document).off("keypress");
   // Hide the player and its perimeter ellipses
   $('#playerPerimeter').hide();
   $('#perimeter').hide();
+  // Change the death state to true
   playerIsDead = true;
   // Open a dialog box saying the player is infected
   playerInfectedDialog();
@@ -786,10 +797,12 @@ function goHomeDialog() {
 // atLeastDialog()
 //
 // Runs when the "Go home" button is clicked.
-// Hides the progressbar and the sore and changes the background image of the body
+// Removes the sanitizerm hides the progressbar, the score and the box with collected protection and changes the background image of the body.
+// Create an image tag for the pile of poo and append it to the dialog box.
 // Changes text and some options of the gameover dialog and displays the new dialog telling the player how many paper rolls he collected.
-// After 2 seconds, displays a thousand paper rolls in the body
+// After 2 seconds, displays a thousand paper rolls randomly in the body
 function atLeastDialog() {
+  // Remove the sanitizer
   $('.sanitizerPerimeter').remove();
   // Hide the progressbar, score and the box with the items to collect for protection
   $('#progressbar').hide();
