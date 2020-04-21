@@ -253,3 +253,26 @@ body {
 #newGameButton {
   display: none;
 }
+
+.titlePageButton  {
+  background-color: white;
+  border: 3px outset #43B9B9;
+	border-radius: 10px;
+  color: black;
+  padding: 5px 25px;
+  text-align: center;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#artistStatementButton {
+  position: absolute;
+  top:440px;
+  left: 610px;
+}
+
+#startButton {
+  position: absolute;
+  top:500px;
+  left: 640px;
+}

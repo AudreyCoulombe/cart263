@@ -57,8 +57,24 @@ let finalPaperRolls = 1000;
 
 // When the page is ready...
 $(document).ready(function() {
-  // Add an event handler on the page that runs the instructionPage function when we click
-  $(document).click(instructionPage);
+  // When the button with id "artistStatementButton" is clicked...
+  // (referred to this example: https://stackoverflow.com/questions/19851782/how-to-open-a-url-in-a-new-tab-using-javascript-or-jquery)
+  $( "#artistStatementButton" ).click(function() {
+    // Open the readme.md file in another tab
+    let artistStatement = window.open('https://audreycoulombe.github.io/cart263/projects/project3/README.md', '_blank');
+    // If the tab did not open...
+    if (!artistStatement) {
+      // Display an alert telling the user he/she has to allow popups
+      alert("Allow popups to read the artist's statement");
+    }
+  });
+  // When the button with the id "startButton" is clicked...
+  $( "#startButton" ).click(function() {
+    // Run the instructionPage function
+    instructionPage();
+    // And remove the 2 buttons
+    $(".titlePageButton").remove();
+  });
 });
 
 // setup()
@@ -100,8 +116,10 @@ function setup() {
 function instructionPage() {
   // Change the background image of the body to the image with instructions
   $('body').css('background-image', 'url(assets/images/instructionPage.png)');
-  // When we click on the document, run the startGame function
-  $(document).click(startGame);
+  // After one second, when we click on the document, run the startGame function
+  setTimeout(function(){
+    $(document).click(startGame);
+  },1000);
 }
 
 // startGame()
